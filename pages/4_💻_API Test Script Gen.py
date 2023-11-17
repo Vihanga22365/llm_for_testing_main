@@ -111,7 +111,7 @@ Think you are a QA engineer. I need to genarate java cucumber step definition fo
 # Test Scenario Combination - {testScenarioCombination}\n
 with st.form('api_ts_gen'):
     st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
-    st.text_input('Test Case', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.")
+    st.text_area('Test Cases', placeholder='Please Type the Test Cases', key = 'testCase', help="Please Enter the Test Cases to be tested here.")
     st.text_input('API Endpoint', placeholder='Enter the API Endpoint', key = 'apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
     st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
     st.text_input('HTTP Method of API', placeholder='Enter the HTTP Method', key = 'httpMethod', help="Please Enter the HTTP method of the API Ex: POST, GET, DELETE, PUT etc.")
