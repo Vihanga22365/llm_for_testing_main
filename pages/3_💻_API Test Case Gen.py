@@ -92,10 +92,10 @@ with st.form('api_tc_gen'):
     st.text_input('Respective Mandatory Parameter Value', placeholder='', key = 'respectiveMandatoryParam')
     st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
     st.text_input('Respective Non-Mandatory Parameter Value', placeholder='', key = 'respectiveNonMandatoryParam')
-    st.text_input('Manatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
-    st.text_input('Non-Manatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
-    st.text_input('Manatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
-    st.text_input('Non-Manatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
+    st.text_input('Mandatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
+    st.text_input('Non-Mandatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
+    st.text_input('Mandatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
+    st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
     submitted = st.form_submit_button("Generate")
     
 
