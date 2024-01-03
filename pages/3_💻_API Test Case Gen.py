@@ -140,16 +140,18 @@ with st.form('api_tc_gen'):
     st.subheader('Write Test Scripts')
     st.caption(':red[Before selecting the language, please copy the required test cases to the clipboard or note them down to write the script out of the generated test cases before clicking the button.]')
 
-    st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'script_lang',index=0,disabled=resultStatus)
+    st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber (Feature File Already Available)','Cucumber (Generate Both Feature File and Script)'),key = 'script_lang',index=0,disabled=resultStatus)
     scripted = st.form_submit_button("Write Test Scripts", disabled=resultStatus)
 
     if scripted:
-        if st.session_state.script_lang == 'Cucumber' :
-            switch_page("BDD Feature File Page")
+        if st.session_state.script_lang == 'Cucumber (Feature File Already Available)' :
+            switch_page("BDD With Feature File")
+        
+        if st.session_state.script_lang == 'Cucumber (Generate Both Feature File and Script)' :
+            switch_page("BDD Without Feature File")
         
         else :
             switch_page("API Test Script Gen")
-
 
 
 
