@@ -15,9 +15,37 @@ st.set_page_config(
 if st.button('Back'):
     switch_page("API Tests")
 
-
-
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+
+mainBusinessObject = ""
+subBusinessObject = ""
+mandatoryHeaderPar = ""
+nonMandatoryHeaderPar = ""
+mandatoryRequestpayloadPar = ""
+nonMandatoryRequestpayloadPar = ""
+
+
+
+if 'mainBusinessObjective' in st.session_state:
+    mainBusinessObject = st.session_state.mainBusinessObjective
+
+if 'subBusinessObjective' in st.session_state:
+    subBusinessObject = st.session_state.subBusinessObjective
+
+if 'mandatoryHeaderParams' in st.session_state:
+    mandatoryHeaderPar = st.session_state.mandatoryHeaderParams
+
+if 'nonMandatoryHeaderParams' in st.session_state:
+    nonMandatoryHeaderPar = st.session_state.nonMandatoryHeaderParams
+
+if 'mandatoryRequestPayloadParameters' in st.session_state:
+    mandatoryRequestpayloadPar = st.session_state.mandatoryRequestPayloadParameters
+
+if 'nonMandatoryRequestPayloadParameters' in st.session_state:
+    nonMandatoryRequestpayloadPar = st.session_state.nonMandatoryRequestPayloadParameters
+
+
+
 
 
 st.title('Generate Test Scripts for API Testing')
@@ -111,19 +139,18 @@ Think you are a QA engineer. I need to genarate java cucumber step definition fo
 # Test Scenario Combination - {testScenarioCombination}\n
 with st.form('api_ts_gen'):
     st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
-    st.text_area('Test Cases', placeholder='Please Type the Test Cases', key = 'testCase', help="Please Enter the Test Cases to be tested here.")
+    st.text_input('Test Case', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.")
     st.text_input('API Endpoint', placeholder='Enter the API Endpoint', key = 'apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
     st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
     st.text_input('HTTP Method of API', placeholder='Enter the HTTP Method', key = 'httpMethod', help="Please Enter the HTTP method of the API Ex: POST, GET, DELETE, PUT etc.")
     st.text_input('Type of End Users', placeholder='Enter the type of End Users', key = 'endUserType', help="Enter the type of the End Users as per their roles." )
-    st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
-    st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
+    st.text_input('Main Business Objective of API',  placeholder='', value= mainBusinessObject,  key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
+    st.text_area('Sub Business Objectives of API', placeholder='', value= mainBusinessObject, key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
     # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
-    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
-    st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
-    st.text_input('Manatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
-    st.text_input('Non-Manatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
-    st.text_input('Manatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
+    st.text_input('Mandatory Header Parameters', placeholder='',value= mandatoryHeaderPar, key = 'mandatoryHeaderParams')
+    st.text_input('Non-Mandatory Header Parameters', placeholder='', value= nonMandatoryHeaderPar,key = 'nonMandatoryHeaderParams')
+    st.text_input('Manatory Request Payload Parameters', placeholder='',value= mandatoryRequestpayloadPar, key = 'mandatoryRequestPayloadParameters')
+    st.text_input('Non-Manatory Request Payload Parameters', placeholder='',value= nonMandatoryRequestpayloadPar, key = 'nonMandatoryRequestPayloadParameters')
     st.text_input('Non-Manatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
     st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
     submitted = st.form_submit_button("Generate")
@@ -215,3 +242,5 @@ with st.form('api_ts_gen'):
             if(len(formatted_prompt) != 0):
                 response = llm(formatted_prompt)
                 st.code(response)
+
+st.cache_data.clear()
