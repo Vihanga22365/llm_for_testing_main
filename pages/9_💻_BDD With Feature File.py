@@ -21,19 +21,13 @@ os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
 
 
-
-
-
-
-
 st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ Scenario File.')
 st.write('Please fill the details below with respect to the test script you want to be generated')
-
 if 'response' in st.session_state:
     tcResponse = st.session_state.response
     st.write('Please copy the test cases you want from the previously generated test cases below.')
     st.code(tcResponse)
-    
+
 template: str = """
 I want to generate a test script for below test case. Below I mentioned the test case and API details\n
 Test case type - {testCaseType}\n
@@ -56,6 +50,7 @@ Think you are a QA engineer. You need to mainly consider above mentioned test ca
 scenario_template: str = """I want to generate cucumber scenario for below test case. Below I mention test case and API details.
 
 Test case type - {testCaseType}\n
+Tag name - {tagName} \n
 Test case - {testCase}\n
 
 Details:
@@ -74,6 +69,7 @@ step_def_template: str = """
 I want to generate java cucumber step definition for below cucumber feature file. Below I mention test case, API details and cucumber scenario.
 
 Test case type - {testCaseType}\n
+Tag name - {tagName} \n
 Test cases - {testCase}\n
 
 Details:
@@ -89,11 +85,39 @@ Think you are a QA engineer. I need to genarate java cucumber step definition fo
 
 
 
+# def generate():
+#     api_ts_template = PromptTemplate.from_template(template)
+#     api_ts_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','testScenarioCombination','mandatoryHeaderParams','respectiveMandatoryParam','nonMandatoryHeaderParams','respectiveNonMandatoryParam','mandatoryRequestPayloadParameters']
 
+#     formatted_prompt = api_ts_template.format(
+#         testCaseType = st.session_state.testCaseType,
+#         testCase = st.session_state.testCase,
+#         apiEndpoint = st.session_state.apiEndpoint,
+#         apiName = st.session_state.apiName,
+#         httpMethod = st.session_state.httpMethod,
+#         mainBusinessObjective = st.session_state.mainBusinessObjective,
+#         subBusinessObjective = st.session_state.subBusinessObjective,
+#         testScenarioCombination = st.session_state.testScenarioCombination,
+#         mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
+#         respectiveMandatoryParam = st.session_state.respectiveMandatoryParam,
+#         nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
+#         respectiveNonMandatoryParam = st.session_state.respectiveNonMandatoryParam,
+#         mandatoryRequestPayloadParameters = st.session_state.mandatoryRequestPayloadParameters,
+#         nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters
+#     )
 
+    
 
+#     llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+
+#     if(len(fprompt) != 0):
+#         response = llm(fprompt)
+#         st.code(response)
+
+# Test Scenario Combination - {testScenarioCombination}\n
 with st.form('api_ts_gen'):
     st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
+    st.text_input('Tag Name', placeholder='Enter the name of the tag', key = 'tagName', help="Enter the tag name that is used to group the test cases")
     st.text_area('Test Cases', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.", height=200)
     st.text_input('API Endpoint', placeholder='Enter the API Endpoint', key = 'apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
     #st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
@@ -102,7 +126,7 @@ with st.form('api_ts_gen'):
     #st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
     #st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
     # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
-    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
+    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams', value=st.session_state.mandatoryHeaderParams)
     st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
     st.text_input('Manatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
     st.text_input('Non-Manatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
@@ -115,10 +139,11 @@ with st.form('api_ts_gen'):
     if submitted: 
     
         cucumber_td_template = PromptTemplate.from_template(step_def_template)
-        cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','scenario']
+        cucumber_td_template.input_variables=['testCaseType','tagName','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','scenario']
 
         cucumber_step_formatted_prompt = cucumber_td_template.format(
             testCaseType = st.session_state.testCaseType,
+            tagName = st.session_state.tagName,
             testCase = st.session_state.testCase,
             apiEndpoint = st.session_state.apiEndpoint,
             httpMethod = st.session_state.httpMethod,
