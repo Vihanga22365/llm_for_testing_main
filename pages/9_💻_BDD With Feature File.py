@@ -19,12 +19,23 @@ if st.button('Back'):
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+
+
+
+
+
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+    st.write('Please copy the test cases you want from the previously generated test cases below.')
+    st.code(tcResponse)
 
 st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ Scenario File.')
 st.write('Please fill the details below with respect to the test script you want to be generated')
 
 if 'response' in st.session_state:
-    tcResponse = st.session_state.response
+    tcResponse = st.session_state.response.content
     st.write('Please copy the test cases you want from the previously generated test cases below.')
     st.code(tcResponse)
     
@@ -50,7 +61,6 @@ Think you are a QA engineer. You need to mainly consider above mentioned test ca
 scenario_template: str = """I want to generate cucumber scenario for below test case. Below I mention test case and API details.
 
 Test case type - {testCaseType}\n
-Tag name - {tagName} \n
 Test case - {testCase}\n
 
 Details:
@@ -69,7 +79,6 @@ step_def_template: str = """
 I want to generate java cucumber step definition for below cucumber feature file. Below I mention test case, API details and cucumber scenario.
 
 Test case type - {testCaseType}\n
-Tag name - {tagName} \n
 Test cases - {testCase}\n
 
 Details:
@@ -117,7 +126,6 @@ Think you are a QA engineer. I need to genarate java cucumber step definition fo
 # Test Scenario Combination - {testScenarioCombination}\n
 with st.form('api_ts_gen'):
     st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
-    st.text_input('Tag Name', placeholder='Enter the name of the tag', key = 'tagName', help="Enter the tag name that is used to group the test cases")
     st.text_area('Test Cases', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.", height=200)
     st.text_input('API Endpoint', placeholder='Enter the API Endpoint', key = 'apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
     #st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
@@ -139,11 +147,10 @@ with st.form('api_ts_gen'):
     if submitted: 
     
         cucumber_td_template = PromptTemplate.from_template(step_def_template)
-        cucumber_td_template.input_variables=['testCaseType','tagName','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','scenario']
+        cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','scenario']
 
         cucumber_step_formatted_prompt = cucumber_td_template.format(
             testCaseType = st.session_state.testCaseType,
-            tagName = st.session_state.tagName,
             testCase = st.session_state.testCase,
             apiEndpoint = st.session_state.apiEndpoint,
             httpMethod = st.session_state.httpMethod,
