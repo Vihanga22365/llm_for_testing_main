@@ -19,7 +19,7 @@ if st.button('Back'):
 
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
-GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+
 
 mainBusinessObject = ""
 subBusinessObject = ""
