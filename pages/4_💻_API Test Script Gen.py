@@ -45,7 +45,7 @@ if 'nonMandatoryRequestPayloadParameters' in st.session_state:
     nonMandatoryRequestpayloadPar = st.session_state.nonMandatoryRequestPayloadParameters
 
 if 'response' in st.session_state:
-    tcResponse = st.session_state.response.content
+    tcResponse = st.session_state.response
 
 
 
