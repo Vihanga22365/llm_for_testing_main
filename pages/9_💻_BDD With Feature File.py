@@ -19,17 +19,12 @@ if st.button('Back'):
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
-if 'response' in st.session_state:
-    tcResponse = st.session_state.response.content
 
 
 
 
 
-if 'response' in st.session_state:
-    tcResponse = st.session_state.response.content
-    st.write('Please copy the test cases you want from the previously generated test cases below.')
-    st.code(tcResponse)
+
 
 st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ Scenario File.')
 st.write('Please fill the details below with respect to the test script you want to be generated')
