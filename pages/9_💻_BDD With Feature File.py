@@ -94,36 +94,9 @@ Think you are a QA engineer. I need to genarate java cucumber step definition fo
 
 
 
-# def generate():
-#     api_ts_template = PromptTemplate.from_template(template)
-#     api_ts_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','testScenarioCombination','mandatoryHeaderParams','respectiveMandatoryParam','nonMandatoryHeaderParams','respectiveNonMandatoryParam','mandatoryRequestPayloadParameters']
 
-#     formatted_prompt = api_ts_template.format(
-#         testCaseType = st.session_state.testCaseType,
-#         testCase = st.session_state.testCase,
-#         apiEndpoint = st.session_state.apiEndpoint,
-#         apiName = st.session_state.apiName,
-#         httpMethod = st.session_state.httpMethod,
-#         mainBusinessObjective = st.session_state.mainBusinessObjective,
-#         subBusinessObjective = st.session_state.subBusinessObjective,
-#         testScenarioCombination = st.session_state.testScenarioCombination,
-#         mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
-#         respectiveMandatoryParam = st.session_state.respectiveMandatoryParam,
-#         nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
-#         respectiveNonMandatoryParam = st.session_state.respectiveNonMandatoryParam,
-#         mandatoryRequestPayloadParameters = st.session_state.mandatoryRequestPayloadParameters,
-#         nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters
-#     )
 
-    
 
-#     llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
-
-#     if(len(fprompt) != 0):
-#         response = llm(fprompt)
-#         st.code(response)
-
-# Test Scenario Combination - {testScenarioCombination}\n
 with st.form('api_ts_gen'):
     st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
     st.text_area('Test Cases', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.", height=200)
