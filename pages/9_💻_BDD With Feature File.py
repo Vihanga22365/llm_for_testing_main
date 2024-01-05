@@ -19,11 +19,26 @@ if st.button('Back'):
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+
+
+
+
+
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+    st.write('Please copy the test cases you want from the previously generated test cases below.')
+    st.code(tcResponse)
 
 st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ Scenario File.')
 st.write('Please fill the details below with respect to the test script you want to be generated')
 
-
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+    st.write('Please copy the test cases you want from the previously generated test cases below.')
+    st.code(tcResponse)
+    
 template: str = """
 I want to generate a test script for below test case. Below I mentioned the test case and API details\n
 Test case type - {testCaseType}\n
@@ -119,7 +134,7 @@ with st.form('api_ts_gen'):
     #st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
     #st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
     # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
-    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
+    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams', value=st.session_state.mandatoryHeaderParams)
     st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
     st.text_input('Manatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
     st.text_input('Non-Manatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
