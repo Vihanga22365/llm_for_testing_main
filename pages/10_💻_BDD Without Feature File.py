@@ -4,7 +4,7 @@ from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
+
 
 
 st.set_page_config(
