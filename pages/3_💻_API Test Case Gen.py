@@ -132,6 +132,7 @@ with st.form('api_tc_gen'):
             global response
             response = llm(fprompt)
             st.code(response)
+            st.session_state['response'] = response
 
         if(len(response) != 0):
                 resultStatus = False
