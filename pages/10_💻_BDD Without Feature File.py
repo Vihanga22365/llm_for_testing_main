@@ -4,6 +4,7 @@ from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
 import os
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 st.set_page_config(
@@ -18,6 +19,7 @@ if st.button('Back'):
 
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 mainBusinessObject = ""
 subBusinessObject = ""
@@ -25,6 +27,7 @@ mandatoryHeaderPar = ""
 nonMandatoryHeaderPar = ""
 mandatoryRequestpayloadPar = ""
 nonMandatoryRequestpayloadPar = ""
+tcResponse = ""
 
 
 
@@ -46,10 +49,18 @@ if 'mandatoryRequestPayloadParameters' in st.session_state:
 if 'nonMandatoryRequestPayloadParameters' in st.session_state:
     nonMandatoryRequestpayloadPar = st.session_state.nonMandatoryRequestPayloadParameters
 
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+
+
 
 
 st.title('Generate BDD Feature File and Step Definitions')
 st.write('Please fill the details below with respect to the test script you want to be generated')
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+    st.write('Please copy the test cases you want from the previously generated test cases below.')
+    st.code(tcResponse)
 
 
 template: str = """
