@@ -20,7 +20,7 @@ if st.button('Back'):
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 
 if 'response' in st.session_state:
-    tcResponse = st.session_state.response.content
+    tcResponse = st.session_state.response
 
 
 
