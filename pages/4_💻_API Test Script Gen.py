@@ -44,12 +44,18 @@ if 'mandatoryRequestPayloadParameters' in st.session_state:
 if 'nonMandatoryRequestPayloadParameters' in st.session_state:
     nonMandatoryRequestpayloadPar = st.session_state.nonMandatoryRequestPayloadParameters
 
-
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
 
 
 
 st.title('Generate Test Scripts for API Testing')
 st.write('Please fill the details below with respect to the test script you want to be generated')
+if 'response' in st.session_state:
+    tcResponse = st.session_state.response.content
+    st.write('Please copy the test cases you want from the previously generated test cases below.')
+    st.code(tcResponse)
+
 
 
 template: str = """
