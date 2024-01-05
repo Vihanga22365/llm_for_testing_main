@@ -30,7 +30,7 @@ st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ 
 st.write('Please fill the details below with respect to the test script you want to be generated')
 
 if 'response' in st.session_state:
-    tcResponse = st.session_state.response.content
+    tcResponse = st.session_state.response
     st.write('Please copy the test cases you want from the previously generated test cases below.')
     st.code(tcResponse)
     
