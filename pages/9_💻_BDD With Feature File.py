@@ -126,7 +126,7 @@ with st.form('api_ts_gen'):
     #st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
     #st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
     # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
-    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams', value=st.session_state.mandatoryHeaderParams)
+    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
     st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
     st.text_input('Manatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
     st.text_input('Non-Manatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
