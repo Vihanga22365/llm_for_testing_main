@@ -156,6 +156,7 @@ with st.form('api_ts_gen'):
     st.text_input('Non-Mandatory Header Parameters', placeholder='', value= nonMandatoryHeaderPar,key = 'nonMandatoryHeaderParams')
     st.text_input('Mandatory Request Payload Parameters', placeholder='',value= mandatoryRequestpayloadPar, key = 'mandatoryRequestPayloadParameters')
     st.text_input('Non-Mandatory Request Payload Parameters', placeholder='',value= nonMandatoryRequestpayloadPar, key = 'nonMandatoryRequestPayloadParameters')
+    st.text_input('Mandatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
     st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
     st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
     submitted = st.form_submit_button("Generate")
