@@ -100,55 +100,32 @@ if on:
 
             llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-            if(len(fprompt) != 0):
-                response = llm(fprompt)
-                st.code(response)
-                st.session_state['response'] = response
+#     if(len(fprompt) != 0):
+#         global response
+#         response = llm(fprompt)
+#         st.code(response)
 
-            if(len(response) != 0):
-                    resultStatus = False
 
-        st.divider()
-        st.subheader('Write Test Scripts')
-        st.caption(':red[Before selecting the language, please copy the required test cases to the clipboard or note them down to write the script out of the generated test cases before clicking the button.]')
 
-        st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber (Feature File Already Available)','Cucumber (Generate Both Feature File and Script)'),key = 'script_lang',index=0,disabled=resultStatus)
-        scripted = st.form_submit_button("Write Test Scripts", disabled=resultStatus)
 
-        if scripted:
-            if st.session_state.script_lang == 'Cucumber (Feature File Already Available)' :
-                switch_page("BDD With Feature File")
-            
-            if st.session_state.script_lang == 'Cucumber (Generate Both Feature File and Script)' :
-                switch_page("BDD Without Feature File")
-
-            if st.session_state.script_lang == 'Java' :
-                switch_page("API Test Script Gen Java")
-
-            if st.session_state.script_lang == 'Python' :
-                switch_page("API Test Script Gen Python")
-            
-            else :
-                switch_page("API Test Script Gen")
-
-else: 
-    with st.form('api_tc_gen'):
-        st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
-        st.text_input('HTTP Method of API', placeholder='Enter the HTTP Method', key = 'httpMethod', help="Please Enter the HTTP method of the API Ex: POST, GET, DELETE, PUT etc.")
-        st.text_input('Type of End Users', placeholder='Enter the type of End Users', key = 'endUserType', help="Enter the type of the End Users as per their roles." )
-        st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
-        st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
-        # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
-        st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
-        st.text_input('Respective Mandatory Parameter Value', placeholder='', key = 'respectiveMandatoryParam')
-        st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
-        st.text_input('Respective Non-Mandatory Parameter Value', placeholder='', key = 'respectiveNonMandatoryParam')
-        st.text_input('Mandatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
-        st.text_input('Non-Mandatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
-        st.text_input('Mandatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
-        st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
-        submitted = st.form_submit_button("Generate")
-        
+    
+with st.form('api_tc_gen'):
+    st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
+    st.text_input('HTTP Method of API', placeholder='Enter the HTTP Method', key = 'httpMethod', help="Please Enter the HTTP method of the API Ex: POST, GET, DELETE, PUT etc.")
+    st.text_input('Type of End Users', placeholder='Enter the type of End Users', key = 'endUserType', help="Enter the type of the End Users as per their roles." )
+    st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
+    st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
+    # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
+    st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
+    st.text_input('Respective Mandatory Parameter Value', placeholder='', key = 'respectiveMandatoryParam')
+    st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
+    st.text_input('Respective Non-Mandatory Parameter Value', placeholder='', key = 'respectiveNonMandatoryParam')
+    st.text_input('Manatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
+    st.text_input('Non-Manatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
+    st.text_input('Manatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
+    st.text_input('Non-Manatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
+    submitted = st.form_submit_button("Generate")
+    
 
         if submitted:
             api_tc_template = PromptTemplate.from_template(template)
@@ -179,11 +156,10 @@ else:
 
             llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-            if(len(fprompt) != 0):
-
-                response = llm(fprompt)
-                st.code(response)
-                st.session_state['response'] = response
+        if(len(fprompt) != 0):
+            global response
+            response = llm(fprompt)
+            st.code(response)
 
             if(len(response) != 0):
                     resultStatus = False
@@ -192,25 +168,16 @@ else:
         st.subheader('Write Test Scripts')
         st.caption(':red[Before selecting the language, please copy the required test cases to the clipboard or note them down to write the script out of the generated test cases before clicking the button.]')
 
-        st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber (Feature File Already Available)','Cucumber (Generate Both Feature File and Script)'),key = 'script_lang',index=0,disabled=resultStatus)
-        scripted = st.form_submit_button("Write Test Scripts", disabled=resultStatus)
+    st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'script_lang',index=0,disabled=resultStatus)
+    scripted = st.form_submit_button("Write Test Scripts", disabled=resultStatus)
 
-        if scripted:
-            if st.session_state.script_lang == 'Cucumber (Feature File Already Available)' :
-                switch_page("BDD With Feature File")
-            
-            if st.session_state.script_lang == 'Cucumber (Generate Both Feature File and Script)' :
-                switch_page("BDD Without Feature File")
+    if scripted:
+        if st.session_state.script_lang == 'Cucumber' :
+            switch_page("BDD Feature File Page")
+        
+        else :
+            switch_page("API Test Script Gen")
 
-            if st.session_state.script_lang == 'Java' :
-                switch_page("API Test Script Gen Java")
-
-            if st.session_state.script_lang == 'Python' :
-                switch_page("API Test Script Gen Python")
-            
-            else :
-                switch_page("API Test Script Gen")
-    
 
 
 
