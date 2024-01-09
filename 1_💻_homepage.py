@@ -13,6 +13,7 @@ st.set_page_config(
 
 st.title("Test Case Generator")
 
+st.write('Please Select the type of tests you want to run')
 
 col1,col2=st.columns(2)
 
