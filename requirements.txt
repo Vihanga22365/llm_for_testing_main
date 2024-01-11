@@ -2,3 +2,7 @@ streamlit-extras
 python-dotenv
 langchain
 openai==0.28
+google-generativeai
+langchain-google-genai
+st-pages
+

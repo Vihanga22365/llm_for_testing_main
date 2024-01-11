@@ -4,6 +4,8 @@ from langchain import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
 import os
+from st_pages import hide_pages
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 st.set_page_config(
@@ -11,11 +13,16 @@ st.set_page_config(
     layout="wide"
 )
 
+hide_pages(
+    "homepage"
+)
+
  
 if st.button('Back'):
-    switch_page("API Tests")
+    switch_page("API Test Case Gen")
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 mainBusinessObject = ""
 subBusinessObject = ""
@@ -47,13 +54,28 @@ if 'nonMandatoryRequestPayloadParameters' in st.session_state:
 
 
 
+st.title('Generate Java Test Scripts for API Testing')
 
-st.title('Generate Test Scripts for API Testing')
+if 'model' in st.session_state:
+    model = st.session_state.model
+    st.write('Selected LLM: ' ,model)
+    #if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
+        #switch_page('homepage')
+
+else:
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+
+    if model != None:
+        st.session_state.model = model
+
+
 st.write('Please fill the details below with respect to the test script you want to be generated')
 if 'response' in st.session_state:
     tcResponse = st.session_state.response
     st.write('Please copy the test cases you want from the previously generated test cases below.')
     st.code(tcResponse)
+
+
 
 template: str = """
 I want to generate a test script for below test case. Below I mentioned the test case and API details\n
@@ -142,10 +164,29 @@ if submitted:
 
             
 
-    llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+    if model == 'GPT-3.5 Turbo':
 
-    if(len(formatted_prompt) != 0):
-        response = llm(formatted_prompt)
-        st.code(response)
+        st.write('Using: '+model)
+
+        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+
+        if(len(formatted_prompt) != 0):
+            response = llm(formatted_prompt)
+            st.code(response)
+            
+        
+
+    if model ==  'Google Gemini Pro': 
+        st.write('Using: ' + model)
+
+        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+        if(len(formatted_prompt) != 0):
+            response = llm.invoke(formatted_prompt)
+            st.code(response.content)
+            
+
+    if model == None:
+        st.error('Please Select a LLM')
 
 st.cache_data.clear()

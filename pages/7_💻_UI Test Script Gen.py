@@ -4,11 +4,20 @@ from langchain import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
 import os
+from st_pages import hide_pages
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 st.set_page_config(
     initial_sidebar_state="collapsed",
     layout="wide"
+)
+
+hide_pages(
+    "homepage"
 )
 
  
@@ -17,6 +26,20 @@ if st.button('Back'):
 
 
 st.title('Generate Test Scripts for Functional UI Testing')
+
+if 'model' in st.session_state:
+    model = st.session_state.model
+    st.write('Selected LLM: ' ,model)
+    if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
+        switch_page('homepage')
+
+
+else:
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+
+    if model != None:
+        st.session_state.model = model
+
 st.write('Please fill the details below with respect to the test case you want to be generated')
 
 template = """ 
@@ -74,8 +97,28 @@ if submitted:
         language = st.session_state.language
     )
 
-    llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-    if(len(formatted_prompt) != 0):
-        response = llm(formatted_prompt)
-        st.code(response)
+    if model == 'GPT-3.5 Turbo':
+
+        st.write('Using: '+model)
+
+        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+
+        if(len(formatted_prompt) != 0):
+            response = llm(formatted_prompt)
+            st.code(response)
+        
+        
+
+    if model ==  'Google Gemini Pro': 
+        st.write('Using: ' + model)
+
+        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+        if(len(formatted_prompt) != 0):
+            response = llm.invoke(formatted_prompt)
+            st.code(response.content)
+           
+
+    if model == None:
+        st.error('Please Select a LLM')

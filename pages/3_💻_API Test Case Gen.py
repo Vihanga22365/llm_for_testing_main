@@ -5,16 +5,26 @@ from dotenv import load_dotenv
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 import os
+from langchain_google_genai import ChatGoogleGenerativeAI
+from st_pages import hide_pages
+
+
 
 st.set_page_config(
     initial_sidebar_state="collapsed",
     layout="wide"
 )
 
+hide_pages(
+    "homepage"
+)
+
 if st.button('Back'):
     switch_page("API Tests")
 
-fprompt = ""
+hide_pages(
+    "homepage"
+)
 
 
 load_dotenv()
@@ -22,8 +32,26 @@ load_dotenv()
 resultStatus = True
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 st.title('Generate Test Cases for API Testing')
+
+
+
+if 'model' in st.session_state:
+    model = st.session_state.model
+    st.write('Selected LLM: ',model)
+    if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
+        switch_page('homepage')
+
+else:
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+
+    if model != None:
+        st.session_state.model = model
+
+
+
 st.write('Please fill the details below with respect to the test case you want to be generated')
 
 
@@ -49,7 +77,6 @@ When writing the test cases, follow  QA standards, and keywords. Please write te
 
 
 
-
 on = st.toggle('Populate fields with a sample scenario')
 if on:
     
@@ -59,7 +86,6 @@ if on:
         st.text_input('Type of End Users', placeholder='Enter the type of End Users', value='Two types of Bankers RM and FA',key = 'endUserType', help="Enter the type of the End Users as per their roles." )
         st.text_input('Main Business Objective of API', placeholder='',value=' Schedule a meeting with Banker and customer with given time in ABC application', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
         st.text_area('Sub Business Objectives of API', placeholder='', value="""RM account should be created in ABC Application end if RM is not available in ABC Application end when schedule meeting with RM and Customer, FA account should be created in ABC Application end if FA is not available in ABC Application end when schedule meeting with FA , Customer account should be created in ABC Application end if customer is not available in ABC Application end when schedule meeting with customer, If relevant RM and Customer are not mapped in ABC Application end  then Mapping should be created in between RM and customer when meeting is schedule with RM and customer,  If relevant FA and Customer are not mapped in Moxo end  then Mapping should be created in between FA and customer when meeting is schedule with FA and customer, Customer should be Mapped with FA and RM when meeting is scheduled with both RM and FA. """,key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
-        # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
         st.text_input('Mandatory Header Parameters', placeholder=' ',value='Country code and Business Code', key = 'mandatoryHeaderParams')
         st.text_input('Respective Mandatory Parameter Value', placeholder='',value='US and GCB', key = 'respectiveMandatoryParam')
         st.text_input('Non-Mandatory Header Parameters', placeholder='',value='UUID', key = 'nonMandatoryHeaderParams')
@@ -82,7 +108,6 @@ if on:
                 httpMethod = st.session_state.httpMethod,
                 mainBusinessObjective = st.session_state.mainBusinessObjective,
                 subBusinessObjective = st.session_state.subBusinessObjective,
-                # testScenarioCombination = st.session_state.testScenarioCombination,
                 mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
                 respectiveMandatoryParam = st.session_state.respectiveMandatoryParam,
                 nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
@@ -93,20 +118,37 @@ if on:
                 nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters
         )
 
-            # st.write(fprompt)
 
-            #r = Timer(2.0, setText, (fprompt))
-            #r.start()
+            if model == 'GPT-3.5 Turbo':
 
-            llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+                st.write('Using: '+model)
 
-            if(len(fprompt) != 0):
-                response = llm(fprompt)
-                st.code(response)
-                st.session_state['response'] = response
+                llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-            if(len(response) != 0):
+                if(len(fprompt) != 0):
+                    response = llm(fprompt)
+                    st.code(response)
+                    st.session_state['response'] = response
+                
+                if(len(response) != 0):
                     resultStatus = False
+
+            if model ==  'Google Gemini Pro': 
+                st.write('Using: ' + model)
+
+                llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+                if(len(fprompt) != 0):
+                    response = llm.invoke(fprompt)
+                    st.code(response.content)
+                    st.session_state['response'] = response.content
+
+                if(len(response.content) != 0):
+                    resultStatus = False
+
+            if model == None:
+                st.error('Please Select a LLM')
+
 
         st.divider()
         st.subheader('Write Test Scripts')
@@ -138,7 +180,6 @@ else:
         st.text_input('Type of End Users', placeholder='Enter the type of End Users', key = 'endUserType', help="Enter the type of the End Users as per their roles." )
         st.text_input('Main Business Objective of API', placeholder='', key = 'mainBusinessObjective', help="Enter the Primary Business Objective to be tested." )
         st.text_area('Sub Business Objectives of API', placeholder='', key = 'subBusinessObjective', help="Enter Sub Business Objectiives to be tested. These objectives should be secondary objectives than the Primary Objective.")
-        # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
         st.text_input('Mandatory Header Parameters', placeholder='', key = 'mandatoryHeaderParams')
         st.text_input('Respective Mandatory Parameter Value', placeholder='', key = 'respectiveMandatoryParam')
         st.text_input('Non-Mandatory Header Parameters', placeholder='', key = 'nonMandatoryHeaderParams')
@@ -161,7 +202,6 @@ else:
                 httpMethod = st.session_state.httpMethod,
                 mainBusinessObjective = st.session_state.mainBusinessObjective,
                 subBusinessObjective = st.session_state.subBusinessObjective,
-                # testScenarioCombination = st.session_state.testScenarioCombination,
                 mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
                 respectiveMandatoryParam = st.session_state.respectiveMandatoryParam,
                 nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
@@ -172,21 +212,37 @@ else:
                 nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters
         )
 
-            # st.write(fprompt)
 
-            #r = Timer(2.0, setText, (fprompt))
-            #r.start()
 
-            llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+            if model == 'GPT-3.5 Turbo':
 
-            if(len(fprompt) != 0):
+                st.write('Using: '+model)
 
-                response = llm(fprompt)
-                st.code(response)
-                st.session_state['response'] = response
+                llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-            if(len(response) != 0):
+                if(len(fprompt) != 0):
+                    response = llm(fprompt)
+                    st.code(response)
+                    st.session_state['response'] = response
+                
+                if(len(response) != 0):
                     resultStatus = False
+
+            if model ==  'Google Gemini Pro': 
+                st.write('Using: ' + model)
+
+                llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+                if(len(fprompt) != 0):
+                    response = llm.invoke(fprompt)
+                    st.code(response.content)
+                    st.session_state['response'] = response.content
+
+                if(len(response.content) != 0):
+                    resultStatus = False
+
+            if model == None:
+                st.error('Please Select a LLM')
 
         st.divider()
         st.subheader('Write Test Scripts')
@@ -210,7 +266,7 @@ else:
             
             else :
                 switch_page("API Test Script Gen")
-    
+
 
 
 

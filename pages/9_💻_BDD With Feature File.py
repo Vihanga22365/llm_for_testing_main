@@ -4,6 +4,8 @@ from langchain import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
 import os
+from st_pages import hide_pages
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 st.set_page_config(
@@ -11,17 +13,35 @@ st.set_page_config(
     layout="wide"
 )
 
+hide_pages(
+    "homepage"
+)
+
  
 if st.button('Back'):
-    switch_page("BDD Feature File Page")
+    switch_page("API Test Case Gen")
 
 
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 
 
 st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ Scenario File.')
+
+if 'model' in st.session_state:
+    model = st.session_state.model
+    st.write('Selected LLM: ' ,model)
+    #if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
+        #switch_page('homepage')
+
+else:
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+
+    if model != None:
+        st.session_state.model = model
+    
 st.write('Please fill the details below with respect to the test script you want to be generated')
 if 'response' in st.session_state:
     tcResponse = st.session_state.response
@@ -167,8 +187,29 @@ if submitted:
         scenario = st.session_state.scenario
             )
 
-    llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-    if(len(cucumber_step_formatted_prompt) != 0):
-            response_2 = llm(cucumber_step_formatted_prompt)
-            st.code(response_2)
+    if model == 'GPT-3.5 Turbo':
+
+        st.write('Using: '+model)
+
+        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+
+        if(len(cucumber_step_formatted_prompt) != 0):
+            response = llm(cucumber_step_formatted_prompt)
+            st.code(response)
+            
+        
+
+    if model ==  'Google Gemini Pro': 
+        st.write('Using: ' + model)
+
+        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+        if(len(cucumber_step_formatted_prompt) != 0):
+            response = llm.invoke(cucumber_step_formatted_prompt)
+            st.code(response.content)
+            
+
+
+    if model == None:
+        st.error('Please Select a LLM')

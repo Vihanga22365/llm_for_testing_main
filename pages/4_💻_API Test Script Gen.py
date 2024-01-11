@@ -4,6 +4,8 @@ from langchain import PromptTemplate
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
 import os
+from langchain_google_genai import ChatGoogleGenerativeAI
+from st_pages import hide_pages
 
 
 st.set_page_config(
@@ -11,11 +13,16 @@ st.set_page_config(
     layout="wide"
 )
 
+hide_pages(
+    "homepage"
+)
+
  
 if st.button('Back'):
     switch_page("API Tests")
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 mainBusinessObject = ""
 subBusinessObject = ""
@@ -49,11 +56,22 @@ if 'nonMandatoryRequestPayloadParameters' in st.session_state:
 
 
 st.title('Generate Test Scripts for API Testing')
+
+if 'model' in st.session_state:
+    model = st.session_state.model
+    st.write('Selected LLM: ',model)
+    if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
+        switch_page('homepage')
+
+else:
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+
+    if model != None:
+        st.session_state.model = model
+
+
 st.write('Please fill the details below with respect to the test script you want to be generated')
-#if 'response' in st.session_state:
-    #tcResponse = st.session_state.response
-    #st.write('Please copy the test cases you want from the previously generated test cases below.')
-    #st.code(tcResponse)
+
 
 template: str = """
 I want to generate a test script for below test case. Below I mentioned the test case and API details\n
@@ -178,38 +196,76 @@ if submitted:
             # language = st.session_state.language
         )
 
-        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+        if model == 'GPT-3.5 Turbo':
 
-        if(len(cucumber_scenario_formatted_prompt) != 0):
-            global response_1 
-            response_1 = llm(cucumber_scenario_formatted_prompt)
-            st.code(response_1)
+            st.write('Using: ' +model)
 
-        cucumber_td_template = PromptTemplate.from_template(step_def_template)
-        cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
+            llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
 
-        cucumber_step_formatted_prompt = cucumber_td_template.format(
-            testCaseType = st.session_state.testCaseType,
-            testCase = st.session_state.testCase,
-            apiEndpoint = st.session_state.apiEndpoint,
-            httpMethod = st.session_state.httpMethod,
-            # mainBusinessObjective = st.session_state.mainBusinessObjective,
-            # subBusinessObjective = st.session_state.subBusinessObjective,
-            # testScenarioCombination = st.session_state.testScenarioCombination,
-            mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
-            nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
-            mandatoryRequestPayloadParameters = st.session_state.mandatoryRequestPayloadParameters,
-            nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
-            # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
-            # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-            # language = st.session_state.language
-            response = response_1
-        )
+            if(len(cucumber_scenario_formatted_prompt) != 0):
+                response_1 = llm(cucumber_scenario_formatted_prompt)
+                st.code(response_1)
 
-        if(len(cucumber_step_formatted_prompt) != 0):
-            response_2 = llm(cucumber_step_formatted_prompt)
-            st.code(response_2)
+            cucumber_td_template = PromptTemplate.from_template(step_def_template)
+            cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
 
+            cucumber_step_formatted_prompt = cucumber_td_template.format(
+                testCaseType = st.session_state.testCaseType,
+                testCase = st.session_state.testCase,
+                apiEndpoint = st.session_state.apiEndpoint,
+                httpMethod = st.session_state.httpMethod,
+                # mainBusinessObjective = st.session_state.mainBusinessObjective,
+                # subBusinessObjective = st.session_state.subBusinessObjective,
+                # testScenarioCombination = st.session_state.testScenarioCombination,
+                mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
+                nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
+                mandatoryRequestPayloadParameters = st.session_state.mandatoryRequestPayloadParameters,
+                nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
+                # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
+                # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
+                # language = st.session_state.language
+                response = response_1
+                )
+
+            if(len(cucumber_step_formatted_prompt) != 0):
+                response_2 = llm(cucumber_step_formatted_prompt)
+                st.code(response_2)
+
+        if model ==  'Google Gemini Pro': 
+            st.write('Using: ' + model)
+
+            llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)  
+
+            if(len(cucumber_scenario_formatted_prompt) != 0):
+                response_1 = llm.invoke(cucumber_scenario_formatted_prompt)
+                st.code(response_1.content)
+
+
+            cucumber_td_template = PromptTemplate.from_template(step_def_template)
+            cucumber_step_formatted_prompt = cucumber_td_template.format(
+                testCaseType = st.session_state.testCaseType,
+                testCase = st.session_state.testCase,
+                apiEndpoint = st.session_state.apiEndpoint,
+                httpMethod = st.session_state.httpMethod,
+                # mainBusinessObjective = st.session_state.mainBusinessObjective,
+                # subBusinessObjective = st.session_state.subBusinessObjective,
+                # testScenarioCombination = st.session_state.testScenarioCombination,
+                mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
+                nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
+                mandatoryRequestPayloadParameters = st.session_state.mandatoryRequestPayloadParameters,
+                nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
+                # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
+                # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
+                # language = st.session_state.language
+                response = response_1.content
+                )
+
+            if(len(cucumber_step_formatted_prompt) != 0):
+                response_2 = llm.invoke(cucumber_step_formatted_prompt)
+                st.code(response_2.content)
+
+        if model == None:
+            st.error('Please Select a LLM')
 
 
     else : 
@@ -235,12 +291,26 @@ if submitted:
             language = st.session_state.language
         )
 
-        
+        if model == 'GPT-3.5 Turbo':
 
-        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+            st.write('Using: '+model)
 
-        if(len(formatted_prompt) != 0):
-            response = llm(formatted_prompt)
-            st.code(response)
+            llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+
+            if(len(formatted_prompt) != 0):
+                response = llm(formatted_prompt)
+                st.code(response)
+
+        if model ==  'Google Gemini Pro': 
+            st.write('Using: ' + model)
+
+            llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+            if(len(formatted_prompt) != 0):
+                response = llm.invoke(formatted_prompt)
+                st.code(response.content)
+
+        if model == None:
+            st.error('Please Select a LLM')
 
 st.cache_data.clear()
