@@ -24,7 +24,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("LLMS for Testing")
+st.title("LLMs for Testing")
 
 st.markdown('**Select the LLM Model to be used**')
 
