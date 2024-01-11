@@ -24,7 +24,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("Test Case Generator")
+st.title("LLMS for Testing")
 
 st.markdown('**Select the LLM Model to be used**')
 
@@ -38,7 +38,7 @@ disabledButton = False
 if model == None:
     disabledButton = True
 
-st.write('Please Select the type of tests you want to run')
+st.write('Please Select the type of tests you want to generate')
 
 col1,col2=st.columns(2)
 

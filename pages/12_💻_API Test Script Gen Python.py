@@ -69,11 +69,12 @@ else:
     if model != None:
         st.session_state.model = model
 
-st.write('Please fill the details below with respect to the test script you want to be generated')
 if 'response' in st.session_state:
     tcResponse = st.session_state.response
     st.write('Please copy the test cases you want from the previously generated test cases below.')
     st.code(tcResponse)
+
+st.write('Please fill the details below with respect to the test script you want to be generated')
 
 template: str = """
 I want to generate a test script for below test case. Below I mentioned the test case and API details\n
@@ -170,6 +171,7 @@ if submitted:
         if(len(formatted_prompt) != 0):
             response = llm(formatted_prompt)
             st.code(response)
+            del st.session_state['response']
             
         
 
@@ -181,6 +183,7 @@ if submitted:
         if(len(formatted_prompt) != 0):
             response = llm.invoke(formatted_prompt)
             st.code(response.content)
+            del st.session_state['response']
             
 
     if model == None:

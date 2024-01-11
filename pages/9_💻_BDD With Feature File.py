@@ -42,11 +42,13 @@ else:
     if model != None:
         st.session_state.model = model
     
-st.write('Please fill the details below with respect to the test script you want to be generated')
+
 if 'response' in st.session_state:
     tcResponse = st.session_state.response
     st.write('Please copy the test cases you want from the previously generated test cases below.')
     st.code(tcResponse)
+
+st.write('Please fill the details below with respect to the test script you want to be generated')
 
 
 scenario_template: str = """I want to generate cucumber scenario for below test case. Below I mention test case and API details.
@@ -197,6 +199,7 @@ if submitted:
         if(len(cucumber_step_formatted_prompt) != 0):
             response = llm(cucumber_step_formatted_prompt)
             st.code(response)
+            del st.session_state['response']
             
         
 
@@ -208,6 +211,7 @@ if submitted:
         if(len(cucumber_step_formatted_prompt) != 0):
             response = llm.invoke(cucumber_step_formatted_prompt)
             st.code(response.content)
+            del st.session_state['response']
             
 
 
