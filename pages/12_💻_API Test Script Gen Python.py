@@ -59,12 +59,17 @@ st.title('Generate Python Test Scripts for API Testing')
 
 if 'model' in st.session_state:
     model = st.session_state.model
-    st.write('Selected LLM: ' ,model)
-    #if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
+    st.write('Selected LLM: ',model)
+    if st.button('Change the LLM',help='Change the LLM'):
         #switch_page('homepage')
+        del st.session_state['model']
+        model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel', index = None)
+
+        if model != None:
+            st.session_state.model = model
 
 else:
-    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel', index = None)
 
     if model != None:
         st.session_state.model = model
@@ -167,6 +172,16 @@ if submitted:
         st.write('Using: '+model)
 
         llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+
+        if(len(formatted_prompt) != 0):
+            response = llm(formatted_prompt)
+            st.code(response)
+            del st.session_state['response']
+
+    if model ==  'GPT-4': 
+        st.write('Using: ' + model)
+
+        llm = OpenAI(model_name= "gpt-4", temperature = 0.5)
 
         if(len(formatted_prompt) != 0):
             response = llm(formatted_prompt)

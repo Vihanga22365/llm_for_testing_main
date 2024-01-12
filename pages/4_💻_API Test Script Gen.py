@@ -60,11 +60,16 @@ st.title('Generate Test Scripts for API Testing')
 if 'model' in st.session_state:
     model = st.session_state.model
     st.write('Selected LLM: ',model)
-    if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
-        switch_page('homepage')
+    if st.button('Change the LLM',help='Change the LLM'):
+        #switch_page('homepage')
+        del st.session_state['model']
+        model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel', index = None)
+
+        if model != None:
+            st.session_state.model = model
 
 else:
-    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel', index = None)
 
     if model != None:
         st.session_state.model = model
@@ -231,6 +236,42 @@ if submitted:
                 response_2 = llm(cucumber_step_formatted_prompt)
                 st.code(response_2)
 
+
+        if model == 'GPT-4':
+
+            st.write('Using: ' +model)
+
+            llm = OpenAI(model_name= "gpt-4", temperature = 0.5)
+
+            if(len(cucumber_scenario_formatted_prompt) != 0):
+                response_1 = llm(cucumber_scenario_formatted_prompt)
+                st.code(response_1)
+
+            cucumber_td_template = PromptTemplate.from_template(step_def_template)
+            cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
+
+            cucumber_step_formatted_prompt = cucumber_td_template.format(
+                testCaseType = st.session_state.testCaseType,
+                testCase = st.session_state.testCase,
+                apiEndpoint = st.session_state.apiEndpoint,
+                httpMethod = st.session_state.httpMethod,
+                # mainBusinessObjective = st.session_state.mainBusinessObjective,
+                # subBusinessObjective = st.session_state.subBusinessObjective,
+                # testScenarioCombination = st.session_state.testScenarioCombination,
+                mandatoryHeaderParams = st.session_state.mandatoryHeaderParams,
+                nonMandatoryHeaderParams = st.session_state.nonMandatoryHeaderParams,
+                mandatoryRequestPayloadParameters = st.session_state.mandatoryRequestPayloadParameters,
+                nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
+                # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
+                # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
+                # language = st.session_state.language
+                response = response_1
+                )
+
+            if(len(cucumber_step_formatted_prompt) != 0):
+                response_2 = llm(cucumber_step_formatted_prompt)
+                st.code(response_2)
+
         if model ==  'Google Gemini Pro': 
             st.write('Using: ' + model)
 
@@ -296,10 +337,20 @@ if submitted:
             st.write('Using: '+model)
 
             llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.5)
+            
+            if(len(formatted_prompt) != 0):
+                response = llm(formatted_prompt)
+                st.code(response)
+
+        if model ==  'GPT-4': 
+            st.write('Using: ' + model)
+
+            llm = OpenAI(model_name= "gpt-4", temperature = 0.5)
 
             if(len(formatted_prompt) != 0):
                 response = llm(formatted_prompt)
                 st.code(response)
+
 
         if model ==  'Google Gemini Pro': 
             st.write('Using: ' + model)

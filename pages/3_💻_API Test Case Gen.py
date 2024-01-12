@@ -41,11 +41,17 @@ st.title('Generate Test Cases for API Testing')
 if 'model' in st.session_state:
     model = st.session_state.model
     st.write('Selected LLM: ',model)
-    if st.button('Change the LLM',help='Please note that this will revert you back to the start of the app.'):
-        switch_page('homepage')
+    if st.button('Change the LLM',help='Change the LLM'):
+        #switch_page('homepage')
+        del st.session_state['model']
+        model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel', index = None)
+
+        if model != None:
+            st.session_state.model = model
+
 
 else:
-    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel', index = None)
+    model = st.selectbox(':red[Select the LLM Model to be used]',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel', index = None)
 
     if model != None:
         st.session_state.model = model
@@ -146,6 +152,21 @@ if on:
                 if(len(response.content) != 0):
                     resultStatus = False
 
+            if model ==  'GPT-4': 
+                st.write('Using: ' + model)
+
+                llm = ChatOpenAI(model_name= "gpt-4", temperature = 0.5)
+
+                if(len(fprompt) != 0):
+                    response = llm.invoke(fprompt)
+                    st.code(response.content)
+                    st.session_state['response'] = response.content
+
+                if(len(response.content) != 0):
+                    resultStatus = False
+
+            
+
             if model == None:
                 st.error('Please Select a LLM')
 
@@ -232,6 +253,16 @@ else:
                 st.write('Using: ' + model)
 
                 llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+                if(len(fprompt) != 0):
+                    response = llm.invoke(fprompt)
+                    st.code(response.content)
+                    st.session_state['response'] = response.content
+
+            if model ==  'GPT-4': 
+                st.write('Using: ' + model)
+
+                llm = ChatOpenAI(model_name= "gpt-4", temperature = 0.5)
 
                 if(len(fprompt) != 0):
                     response = llm.invoke(fprompt)

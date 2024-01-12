@@ -5,7 +5,7 @@ import os
 
 
 st.set_page_config(
-    page_title="Test Case Generator",
+    page_title="LLMs for Testing",
     page_icon="🖥️",
     initial_sidebar_state="collapsed"
     
@@ -28,7 +28,7 @@ st.title("LLMs for Testing")
 
 st.markdown('**Select the LLM Model to be used**')
 
-model = st.selectbox('Select the LLM Model to be used',('GPT-3.5 Turbo', 'Google Gemini Pro'),key = 'llmModel',index=None,label_visibility="collapsed")
+model = st.selectbox('Select the LLM Model to be used',('GPT-3.5 Turbo', 'GPT-4','Google Gemini Pro'),key = 'llmModel',index=None,label_visibility="collapsed")
 st.session_state['model'] = model
 
 st.divider()
