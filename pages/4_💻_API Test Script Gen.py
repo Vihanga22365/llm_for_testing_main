@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-from langchain import PromptTemplate
+from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 from langchain_community.llms import OpenAI
 from langchain_community.chat_models import ChatOpenAI
