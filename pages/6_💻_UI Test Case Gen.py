@@ -61,12 +61,12 @@ Think you are a QA engineer. Generate all possible positive and negative test ca
 on = st.toggle('Populate fields with a sample scenario')
 if on:  
     with st.form('api_tc_gen', clear_on_submit=True):
-        st.text_input('User Story Name', placeholder='Enter the User Story Name',value='ABC Application Agent gold customer Meeting Scheduling ', key = 'userStoryName',help="Please Enter the Name of the User Story here")
-        st.text_area('Main Business Functionality', placeholder='', value=' The meeting details are added to the relevant agent timeline and calendar option, The meeting details are added to the relevant customer calendar option and dashboard,The agent can initiate the meeting in ABC Application, and the customer should be able to join the meeting. ',key = 'mainBusinessFunc',help="Enter the Primary Business Functionality to be tested.")
+        st.text_input('User Story Name', placeholder='Enter the User Story Name',value='Agent and Gold Customer Meeting Scheduling in the ABC Application', key = 'userStoryName',help="Please Enter the Name of the User Story here")
+        st.text_area('Main Business Functionality', placeholder='', value='The meeting details are added to the relevant agent timeline and calendar, The meeting details are added to the relevant customer calendar and dashboard, The agent can initiate the meeting in ABC Application and the customer should be able to join the meeting.',key = 'mainBusinessFunc',help="Enter the Primary Business Functionality to be tested.")
         st.text_area('Sub Business Functionalities', placeholder='', value='N/A',key = 'subBusinessFunc',help="Enter the Sub business functionalities to be tested.")
         #st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
         st.text_input('Precondition', placeholder='Precondition',value='The meeting request should come from XYZ end.', key = 'precondition', help="Please Enter the Pre Conditions that should be met.")
-        st.text_input('Type of End Users', placeholder='Type of End Users', value='Two types of agents, RM and FA' ,key = 'endUsersType', help="Enter the type of the End Users as per their roles.")
+        st.text_input('Type of End Users', placeholder='Type of End Users', value='Two types of agents named Relationship Managers and Financial Advisors' ,key = 'endUsersType', help="Enter the type of the End Users as per their roles.")
         submitted = st.form_submit_button('Generate')
 
 else: 

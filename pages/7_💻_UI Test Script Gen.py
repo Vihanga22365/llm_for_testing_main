@@ -64,12 +64,12 @@ if on:
     with st.form('api_ts_gen'):
         st.text_input('Test Case Type', placeholder='Enter Test Case Type',value='Positive Test Case ', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
         st.text_input('Test Case', placeholder='Please Type the Test Case', value="Verify that the meeting details are added to the agent's timeline and calendar option when a meeting request is received from XYZ end.",key = 'testCase', help="Please Enter the Test Case to be tested here.")
-        st.text_input('User Story Name', placeholder='Enter the User Story Name', value='ABC Agent gold customer Meeting Scheduling',key = 'userStoryName',help="Please Enter the Name of the User Story here")
-        st.text_area('Main Business Functionality', placeholder='', value='The meeting details are added to the relevant agent timeline and calendar option, The meeting details are added to the relevant customer calendar option and dashboard, The agent can initiate the meeting in ABC Application, and the customer should be able to join the meeting.',key = 'mainBusinessFunc',help="Enter the Primary Business Functionality to be tested.")
+        st.text_input('User Story Name', placeholder='Enter the User Story Name', value='Agent and Gold Customer Meeting Scheduling in the ABC Application',key = 'userStoryName',help="Please Enter the Name of the User Story here")
+        st.text_area('Main Business Functionality', placeholder='', value='The meeting details are added to the relevant agent timeline and calendar, The meeting details are added to the relevant customer calendar and dashboard, The agent can initiate the meeting in ABC Application and the customer should be able to join the meeting.',key = 'mainBusinessFunc',help="Enter the Primary Business Functionality to be tested.")
         st.text_area('Sub Business Functionalities', placeholder='', value='N/A',key = 'subBusinessFunc',help="Enter the Sub business functionalities to be tested.")
         # st.text_input('Test Scenario Combination', placeholder='', key = 'testScenarioCombination')
-        st.text_input('Precondition', placeholder='Precondition', value='The meeting request should come from XYZ end. ',key = 'precondition', help="Please Enter the Pre Conditions that should be met.")
-        st.text_input('Type of End Users', placeholder='Type of End Users',value='Two types of agents, RM and FA.', key = 'endUsersType', help="Enter the type of the End Users as per their roles.")
+        st.text_input('Precondition', placeholder='Precondition', value='The meeting request should come from the XYZ end. ',key = 'precondition', help="Please Enter the Pre Conditions that should be met.")
+        st.text_input('Type of End Users', placeholder='Type of End Users',value='Two types of agents named Relationship Managers and Financial Advisors', key = 'endUsersType', help="Enter the type of the End Users as per their roles.")
         st.selectbox('Select the Language',('Python', 'Java'),key = 'language',placeholder='Select for which language the selenium script should be generated',index=None)
         submitted = st.form_submit_button("Generate")
 

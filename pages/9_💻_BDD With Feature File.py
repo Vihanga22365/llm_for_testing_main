@@ -205,7 +205,8 @@ if submitted:
         if(len(cucumber_step_formatted_prompt) != 0):
             response = llm(cucumber_step_formatted_prompt)
             st.code(response)
-            del st.session_state['response']
+            if 'response' in st.session_state:
+                del st.session_state['response']
 
     if model ==  'GPT-4': 
         st.write('Using: ' + model)
@@ -215,7 +216,8 @@ if submitted:
         if(len(cucumber_step_formatted_prompt) != 0):
             response = llm(cucumber_step_formatted_prompt)
             st.code(response)
-            del st.session_state['response'] 
+            if 'response' in st.session_state:
+                del st.session_state['response']
             
         
 
@@ -227,7 +229,8 @@ if submitted:
         if(len(cucumber_step_formatted_prompt) != 0):
             response = llm.invoke(cucumber_step_formatted_prompt)
             st.code(response.content)
-            del st.session_state['response']
+            if 'response' in st.session_state:
+                del st.session_state['response']
             
 
 
