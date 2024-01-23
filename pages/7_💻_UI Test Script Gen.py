@@ -2,7 +2,8 @@ import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from langchain import PromptTemplate
 from dotenv import load_dotenv
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
+from langchain_community.chat_models import ChatOpenAI
 import os
 from st_pages import hide_pages
 from langchain_google_genai import ChatGoogleGenerativeAI
