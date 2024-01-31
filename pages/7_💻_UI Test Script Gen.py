@@ -120,10 +120,6 @@ Programming language to use: Java with Selenium\n
 Web driver to use: Chrome
 """
 
-reusable_text: str = """
-login(driver, username, password), goToScheduledMeetingPage(driver), removeSomeoneFromTheMeeting(driver, userId)
-
-"""
 
 instruction_text: str = """
 Consider parameterization for flexibility and adaptability.

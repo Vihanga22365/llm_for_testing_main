@@ -29,7 +29,7 @@ GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 
 
-st.title('Generate Test Scripts for Test Cases That Already Have a BDD Feature/ Scenario File.')
+st.title('Generate Test Scripts for Test Cases with Existing BDD Feature/ Scenario File.')
 
 if 'model' in st.session_state:
     model = st.session_state.model
