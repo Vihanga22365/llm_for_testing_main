@@ -61,7 +61,6 @@ st.write('Please fill the details below with respect to the test case you want t
 # """
 
 template = """ 
-I want to generate selenium test script for below test case. Below I mentioned the test case,business requirement and instructions.\n
 Test case type - {testCaseType}\n
 Test case - {testCase}\n
 Business Requirement:\n
@@ -80,8 +79,9 @@ Utilize a testing framework such as TestNG or JUnit.
 Follow the Page Object Model for improved maintainability.
 Include waits effectively using explicit waits.
 Don't be limited to the already available functions.
-When generating a new function other than the ones mentioned, assume the existence of appropriate UI components and always provide the code in the body, 
-You are not required to write the code in the body only for the already implemented functions. 
+Don't assume any other function is available than the mentioned ones.
+When generating a new function other than the already available ones, always assume the existence of appropriate UI components and provide the code in the body.
+Only for the given already implemented functions, You are not required to write the code in the body. 
 If any already existing functions are reused, indicate where they are used.
 
 
