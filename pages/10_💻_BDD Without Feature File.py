@@ -100,7 +100,7 @@ Only output the test scenario document.
 """
 
 step_def_template: str = """
-I want to generate java cucumber step definition for below cucumber scenario. Below I mention test case, API details and cucumber scenario.
+I want to generate {language} cucumber step definition for below cucumber scenario. Below I mention test case, API details and cucumber scenario.
 
 Test case type - {testCaseType}\n
 Tag name - {tagName} \n
@@ -115,7 +115,7 @@ Mandatory Request Payload Parameters - {mandatoryRequestPayloadParameters}\n
 Non-Mandatory Request Payload Parameters - {nonMandatoryRequestPayloadParameters}\n
 Cucumber scenario - {response}
 
-Think you are a QA engineer. I need to genarate java cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate java cucumber step definition only for that cucumber scenario. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer."""
+Think you are a QA engineer. I need to genarate {language} cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate {language} cucumber step definition only for that cucumber scenario. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer."""
 
 on = st.toggle('Populate fields with a sample scenario')
 if on:
@@ -136,6 +136,7 @@ if on:
         st.text_input('Non-Mandatory Request Payload Parameters', placeholder='',value= 'Banker Last Name and Customer Last name ', key = 'nonMandatoryRequestPayloadParameters')
         st.text_input('Mandatory Response Payload Parameters', placeholder='',value= 'N/A',  key = 'mandatoryResponsePayloadParameters')
         st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', value= 'N/A',  key = 'nonMandatoryResponsePayloadParameters')
+        st.selectbox('Required Language',('Python', 'Java'),key = 'language',index=1)
         submitted = st.form_submit_button("Generate")
 
 else:
@@ -157,7 +158,7 @@ else:
         st.text_input('Non-Mandatory Request Payload Parameters', placeholder='',value= nonMandatoryRequestpayloadPar, key = 'nonMandatoryRequestPayloadParameters')
         st.text_input('Mandatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
         st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
-        # st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
+        st.selectbox('Required Language',('Python', 'Java'),key = 'language',index=1)
         submitted = st.form_submit_button("Generate") 
 
 if submitted: 
@@ -211,7 +212,7 @@ if submitted:
             nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
             # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
             # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-            # language = st.session_state.language
+            language = st.session_state.language,
             response = response_1
         )
 
@@ -249,7 +250,7 @@ if submitted:
             nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
             # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
             # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-            # language = st.session_state.language
+            language = st.session_state.language,
             response = response_1.content
         )
 
@@ -286,7 +287,7 @@ if submitted:
             nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
             # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
             # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-            # language = st.session_state.language
+            language = st.session_state.language,
             response = response_1
         )
 

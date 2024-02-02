@@ -8,9 +8,14 @@ st.set_page_config(
 
 )
 
-hide_pages(
-    "homepage"
-)
+
+
+hide_pages("homepage")
+
+
+
+
+
 
 
 if st.button('Back'):

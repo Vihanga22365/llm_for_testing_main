@@ -76,7 +76,7 @@ Only output the test scenario document.
 """
 
 step_def_template: str = """
-I want to generate java cucumber step definition for below cucumber feature file. Below I mention test case, API details and cucumber scenario.
+I want to generate {language} cucumber step definition for below cucumber feature file. Below I mention test case, API details and cucumber scenario.
 
 Test case type - {testCaseType}\n
 Tag name - {tagName} \n
@@ -91,7 +91,7 @@ Mandatory Request Payload Parameters - {mandatoryRequestPayloadParameters}\n
 Non-Mandatory Request Payload Parameters - {nonMandatoryRequestPayloadParameters}\n
 Cucumber scenario - {scenario}
 
-Think you are a QA engineer. I need to genarate java cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate java cucumber step definition only for that cucumber scenario. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer."""
+Think you are a QA engineer. I need to genarate {language} cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate {language} cucumber step definition only for that cucumber scenario. Plase provide code in function body as much as possible. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer."""
 
 sample_step_def: str = """
 **Feature: Scheduling a Meeting**
@@ -155,6 +155,7 @@ if on:
         st.text_input('Mandatory Request Payload Parameters', placeholder='',value= 'Banker ID, Customer ID, Banker First Name, Customer First Name, Host Type, Start Time and End Time ', key = 'mandatoryRequestPayloadParameters')
         st.text_input('Non-Mandatory Request Payload Parameters', placeholder='',value= 'Banker Last Name and Customer Last name ', key = 'nonMandatoryRequestPayloadParameters')
         st.text_area('Enter the Cucumber Feature File/ Scenario', placeholder='', value=sample_step_def, key = 'scenario', help="Copy the Cucumber Scenario File/ Feature File", height=500)
+        st.selectbox('Required Language',('Python', 'Java'),key = 'language',index=1)
         submitted = st.form_submit_button("Generate")
 
 else: 
@@ -169,6 +170,7 @@ else:
         st.text_input('Mandatory Request Payload Parameters', placeholder='', key = 'mandatoryRequestPayloadParameters')
         st.text_input('Non-Mandatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
         st.text_area('Enter the Cucumber Feature File/ Scenario', placeholder='', key = 'scenario', help="Copy the Cucumber Scenario File/ Feature File", height=500)
+        st.selectbox('Required Language',('Python', 'Java'),key = 'language',index=1)
         submitted = st.form_submit_button("Generate")
 
 if submitted: 
@@ -191,7 +193,7 @@ if submitted:
         nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
         # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
         # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-        # language = st.session_state.language
+        language = st.session_state.language,
         scenario = st.session_state.scenario
             )
 
