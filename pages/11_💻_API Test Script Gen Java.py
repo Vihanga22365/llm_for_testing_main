@@ -124,6 +124,7 @@ if on:
         st.text_input('Mandatory Response Payload Parameters', placeholder='',value= 'N/A',  key = 'mandatoryResponsePayloadParameters')
         st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', value= 'N/A',  key = 'nonMandatoryResponsePayloadParameters')
         #st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
+        #st.selectbox('Rest Assured Type',('Rest Assured','Rest Assured with BDD'),key= 'restAssuredType',index=0)
         submitted = st.form_submit_button("Generate")
 else: 
     with st.form('api_ts_gen'):
@@ -143,6 +144,7 @@ else:
         st.text_input('Mandatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
         st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
         #st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
+        #st.selectbox('Rest Assured Type',('Rest Assured','Rest Assured with BDD'),key= 'restAssuredType',index=0)
         submitted = st.form_submit_button("Generate")
 
 
