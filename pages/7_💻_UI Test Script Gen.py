@@ -9,6 +9,7 @@ from st_pages import hide_pages
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 
+
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
@@ -195,11 +196,11 @@ if submitted:
     if model ==  'GPT-4': 
         st.write('Using: ' + model)
 
-        llm = OpenAI(model_name= "gpt-4", temperature = 0.5)
+        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
 
         if(len(formatted_prompt) != 0):
-            response = llm(formatted_prompt)
-            st.code(response)
+            response = llm.invoke(formatted_prompt)
+            st.code(response.content)
            
         
 

@@ -263,11 +263,11 @@ if submitted:
     if model == 'GPT-4':
         st.write('Using: ' +model)
 
-        llm = OpenAI(model_name= "gpt-4", temperature = 0.5)
+        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
 
         if(len(cucumber_scenario_formatted_prompt) != 0):
-            response_1 = llm(cucumber_scenario_formatted_prompt)
-            st.code(response_1)
+            response_1 = llm.invoke(cucumber_scenario_formatted_prompt)
+            st.code(response_1.content)
 
         cucumber_td_template = PromptTemplate.from_template(step_def_template)
         cucumber_td_template.input_variables=['testCaseType','tagName','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
@@ -291,9 +291,11 @@ if submitted:
             response = response_1
         )
 
+
+            
         if(len(cucumber_step_formatted_prompt) != 0):
-            response_2 = llm(cucumber_step_formatted_prompt)
-            st.code(response_2)
+            response_2 = llm.invoke(cucumber_step_formatted_prompt)
+            st.code(response_2.content)
             if 'response' in st.session_state:
                 del st.session_state['response']
 
