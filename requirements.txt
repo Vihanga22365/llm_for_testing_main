@@ -1,3 +1,4 @@
+pandas
 streamlit==1.27.2
 streamlit-extras
 python-dotenv
@@ -7,4 +8,5 @@ google-generativeai
 langchain-google-genai
 st-pages
 langchain-community
+openpyxl
 

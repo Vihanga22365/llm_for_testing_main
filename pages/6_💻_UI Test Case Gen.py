@@ -7,6 +7,7 @@ from langchain_community.chat_models import ChatOpenAI
 import os
 from st_pages import hide_pages
 from langchain_google_genai import ChatGoogleGenerativeAI
+import pandas as pd
 
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
@@ -59,7 +60,45 @@ Think you are a QA engineer. Generate all possible positive and negative test ca
 
 
 on = st.toggle('Populate fields with a sample scenario')
-if on:  
+
+
+if not on:
+
+    uploaded_file = st.file_uploader("Choose an Excel file", type=['xlsx']) 
+
+    def get_excel_file_content_as_binary(file_path):
+        with open(file_path, "rb") as file:
+            return file.read()
+
+    file_path = 'template_files/UI_Test_Cases_Template.xlsx'
+
+    excel_file_content = get_excel_file_content_as_binary(file_path)
+
+    st.download_button(label="Download UI Test Case Template",
+                    data=excel_file_content,
+                    file_name="UI_Test_Cases_Template.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+else:
+    uploaded_file = None
+
+if uploaded_file is not None:
+    try:
+        df = pd.read_excel(uploaded_file, engine='openpyxl')
+        data = df.iloc[0]  # Assuming data for form defaults is in the first row
+
+        with st.form('user_story_form'):
+            st.text_input('User Story Name', value=data.iloc[0], key='userStoryName', help="Please Enter the Name of the User Story here")
+            st.text_area('Main Business Functionality', value=data.iloc[1], key='mainBusinessFunc', help="Enter the Primary Business Functionality to be tested.")
+            st.text_area('Sub Business Functionalities', value=data.iloc[2], key='subBusinessFunc', help="Enter the Sub business functionalities to be tested.")
+            st.text_input('Precondition', value=data.iloc[3], key='precondition', help="Please Enter the Pre Conditions that should be met.")
+            st.text_input('Type of End Users', value=data.iloc[4], key='endUsersType', help="Enter the type of the End Users as per their roles.")
+
+            submitted = st.form_submit_button('Generate')
+    except Exception as e:
+        st.error(f"Error reading Excel file: {e}")
+
+
+elif on:  
     with st.form('api_tc_gen', clear_on_submit=True):
         st.text_input('User Story Name', placeholder='Enter the User Story Name',value='Agent and Gold Customer Meeting Scheduling in the ABC Application', key = 'userStoryName',help="Please Enter the Name of the User Story here")
         st.text_area('Main Business Functionality', placeholder='', value='The meeting details are added to the relevant agent timeline and calendar, The meeting details are added to the relevant customer calendar and dashboard, The agent can initiate the meeting in ABC Application and the customer should be able to join the meeting.',key = 'mainBusinessFunc',help="Enter the Primary Business Functionality to be tested.")

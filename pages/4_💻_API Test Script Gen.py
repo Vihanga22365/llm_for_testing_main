@@ -7,6 +7,7 @@ from langchain_community.chat_models import ChatOpenAI
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from st_pages import hide_pages
+import pandas as pd
 
 
 st.set_page_config(
@@ -95,12 +96,13 @@ Mandatory Request Payload Parameters - {mandatoryRequestPayloadParameters}\n
 Non Mandatory Request Payload Parameters - {nonMandatoryRequestPayloadParameters}\n
 Mandatory Response Payload Parameters - {mandatoryResponsePayloadParameters}\n
 Non Mandatory Response Payload Parameters - {nonMandatoryResponsePayloadParameters}\n
-Think you are a QA engineer. You need to mainly consider above mentioned test case and generate a {language} script according to that testcase, as a professional QA engineer. When you write script please follow coding best practices, coding standards, exception handling as a QA engineer.
+Think you are a QA engineer. You need to mainly consider above mentioned test case and generate a {language} script according to that testcase, as a professional QA engineer. When you write script please follow coding best practices, coding standards, exception handling as a QA engineer. Only answer me with the code and nothing else. don't give additional text with answer. I need code only as answer.
 """
 
 scenario_template: str = """I want to generate cucumber scenario for below test case. Below I mention test case and API details.
 
 Test case type - {testCaseType}\n
+Tag name - {tagName} \n
 Test cases - {testCase}\n
 
 Details:
@@ -112,13 +114,14 @@ Mandatory Request Payload Parameters - {mandatoryRequestPayloadParameters}\n
 Non-Mandatory Request Payload Parameters - {nonMandatoryRequestPayloadParameters}\n
 
 Think you are a QA engineer. I need to genarate cucumber scenario for above test case, as a professional QA engineer. Please mainly focus about above mention test case and i need to genarate cucumber scenarion only for that test case. When you write cucumber scenario, please follow coding best practices, coding standards, exception handling as a QA engineer.
-Only output the test scenario document.
+Only output the test scenario document. Only answer me with the code and nothing else. don't give additional text with answer. I need code only as answer.
 """
 
 step_def_template: str = """
-I want to generate java cucumber step definition for below cucumber scenario. Below I mention test case, API details and cucumber scenario.
+I want to generate {language} cucumber step definition for below cucumber scenario. Below I mention test case, API details and cucumber scenario.
 
 Test case type - {testCaseType}\n
+Tag name - {tagName} \n
 Test cases - {testCase}\n
 
 Details:
@@ -130,14 +133,71 @@ Mandatory Request Payload Parameters - {mandatoryRequestPayloadParameters}\n
 Non-Mandatory Request Payload Parameters - {nonMandatoryRequestPayloadParameters}\n
 Cucumber scenario - {response}
 
-Think you are a QA engineer. I need to genarate java cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate java cucumber step definition only for that cucumber scenario. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer."""
+Think you are a QA engineer. I need to genarate {language} cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate {language} cucumber step definition only for that cucumber scenario. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer. Only answer me with the code and nothing else. don't give additional text with answer. I need code only as answer."""
 
 
 
 on = st.toggle('Populate fields with a sample scenario')
-if on:
+
+
+if not on:
+
+    uploaded_file = st.file_uploader("Choose an Excel file", type=['xlsx']) 
+
+    def get_excel_file_content_as_binary(file_path):
+        with open(file_path, "rb") as file:
+            return file.read()
+
+    file_path = 'template_files/Cucumber_Code_Without_Feature_File_Template.xlsx'
+
+    excel_file_content = get_excel_file_content_as_binary(file_path)
+
+    st.download_button(label="Download Cucumber Code Template",
+                    data=excel_file_content,
+                    file_name="Cucumber_Code_Without_Feature_File_Template.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+else:
+    uploaded_file = None
+
+if uploaded_file is not None:
+    try:
+        df = pd.read_excel(uploaded_file, engine='openpyxl')
+        data = df.iloc[0]  # Assuming data for form defaults is in the first row
+
+        with st.form('api_tc_gen'):
+            st.text_input('Test Case Type', value=data.iloc[0], key='testCaseType', help="Enter the type of the test case here. Ex: Positive, Negative etc.")
+            st.text_input('Tag Name', value=data.iloc[1], key='tagName', help="Enter the tag name that is used to group the test cases")
+            st.text_area('Test Cases', value=data.iloc[2], key='testCase', help="Please Enter the Test Case to be tested here.")
+            st.text_input('API Endpoint', value=data.iloc[3], key='apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
+            st.text_input('API Name', value=data.iloc[4], key='apiName', help="Please Enter the Name of the API Endpoint here.")
+            st.text_input('HTTP Method of API', value=data.iloc[5], key='httpMethod', help="Please Enter the HTTP method of the API Ex: POST, GET, DELETE, PUT etc.")
+            st.text_input('Type of End Users', value=data.iloc[6], key='endUserType', help="Enter the type of the End Users as per their roles.")
+            st.text_input('Main Business Objective of API', value=data.iloc[7], key='mainBusinessObjective', help="Enter the Primary Business Objective to be tested.")
+            st.text_area('Sub Business Objectives of API', value=data.iloc[8], key='subBusinessObjective', help="Enter Sub Business Objectives to be tested. These objectives should be secondary objectives than the Primary Objective.")
+            st.text_input('Mandatory Header Parameters', value=data.iloc[9], key='mandatoryHeaderParams')
+            st.text_input('Non-Mandatory Header Parameters', value=data.iloc[10], key='nonMandatoryHeaderParams')
+            st.text_input('Mandatory Request Payload Parameters', value=data.iloc[11], key='mandatoryRequestPayloadParameters')
+            st.text_input('Non-Mandatory Request Payload Parameters', value=data.iloc[12], key='nonMandatoryRequestPayloadParameters')
+            st.text_input('Mandatory Response Payload Parameters', value=data.iloc[13], key='mandatoryResponsePayloadParameters')
+            st.text_input('Non-Mandatory Response Payload Parameters', value=data.iloc[14], key='nonMandatoryResponsePayloadParameters')
+            language = data.iloc[15]
+            language_with_lower_case = language.lower()
+
+            if language_with_lower_case == 'python':
+                st.selectbox('Required Language', options=['Python', 'Java'], index=0, key='language')
+            elif language_with_lower_case == 'java':
+                st.selectbox('Required Language', options=['Python', 'Java'], index=1, key='language')
+            else:
+                st.selectbox('Required Language', options=['Python', 'Java'], index=1, key='language')
+
+            submitted = st.form_submit_button("Generate")
+    except Exception as e:
+        st.error(f"Error reading Excel file: {e}")
+
+elif on:
     with st.form('api_ts_gen'):
         st.text_input('Test Case Type', placeholder='Enter Test Case Type', value= 'Positive Test Case',key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
+        st.text_input('Tag Name', value="DevEnv", key='tagName', help="Enter the tag name that is used to group the test cases")
         st.text_area('Test Cases', placeholder='Please Type the Test Case', value= 'Verify that a meeting can be scheduled successfully with a valid RM and customer.',key = 'testCase', help="Please Enter the Test Case to be tested here.")
         st.text_input('API Endpoint', placeholder='Enter the API Endpoint', value= 'https://localhost/api/v1/test',key = 'apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
         st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', value='ABC Application Meeting Scheduling Endpoint with Bankers and Gold customers',help="Please Enter the Name of the API Endpoint here.")
@@ -152,7 +212,7 @@ if on:
         st.text_input('Non-Mandatory Request Payload Parameters', placeholder='',value= 'Banker Last Name and Customer Last name ', key = 'nonMandatoryRequestPayloadParameters')
         st.text_input('Mandatory Response Payload Parameters', placeholder='',value= 'N/A',  key = 'mandatoryResponsePayloadParameters')
         st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', value= 'N/A',  key = 'nonMandatoryResponsePayloadParameters')
-        language = st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
+        language = st.selectbox('Select the Test Script Language',('Python', 'Java'),key = 'language',index=0)
         #placeholder_for_selectbox = st.empty()
         submitted = st.form_submit_button("Generate")
 
@@ -160,6 +220,7 @@ if on:
 else:
     with st.form('api_ts_gen'):
         st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
+        st.text_input('Tag Name', key='tagName', help="Enter the tag name that is used to group the test cases")
         st.text_input('Test Case', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.")
         st.text_input('API Endpoint', placeholder='Enter the API Endpoint', key = 'apiEndpoint', help="Please Enter the URL of the API to be tested in this field.")
         st.text_input('API Name', placeholder='Enter API Name', key = 'apiName', help="Please Enter the Name of the API Endpoint here.")
@@ -174,7 +235,7 @@ else:
         st.text_input('Non-Mandatory Request Payload Parameters', placeholder='', key = 'nonMandatoryRequestPayloadParameters')
         st.text_input('Mandatory Response Payload Parameters', placeholder='', key = 'mandatoryResponsePayloadParameters')
         st.text_input('Non-Mandatory Response Payload Parameters', placeholder='', key = 'nonMandatoryResponsePayloadParameters')
-        st.selectbox('Select the Test Script Language',('Python', 'Java', 'Cucumber'),key = 'language',index=0)
+        st.selectbox('Select the Test Script Language',('Python', 'Java'),key = 'language',index=0)
         #placeholder_for_selectbox = st.empty()
         submitted = st.form_submit_button("Generate")
 
@@ -182,13 +243,14 @@ else:
 
 
 if submitted: 
-    if st.session_state.language == 'Cucumber' :
+    if st.session_state.language == 'Cucumber' or st.session_state.language == 'Python' or st.session_state.language == 'Java':
 
         cucumber_ts_template = PromptTemplate.from_template(scenario_template)
-        cucumber_ts_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language']
+        cucumber_ts_template.input_variables=['testCaseType', 'tagName','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language']
 
         cucumber_scenario_formatted_prompt = cucumber_ts_template.format(
             testCaseType = st.session_state.testCaseType,
+            tagName = st.session_state.tagName,
             testCase = st.session_state.testCase,
             apiEndpoint = st.session_state.apiEndpoint,
             httpMethod = st.session_state.httpMethod,
@@ -201,7 +263,7 @@ if submitted:
             nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
             # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
             # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-            # language = st.session_state.language
+            language = st.session_state.language
         )
 
         if model == 'GPT-3.5 Turbo':
@@ -212,13 +274,15 @@ if submitted:
 
             if(len(cucumber_scenario_formatted_prompt) != 0):
                 response_1 = llm(cucumber_scenario_formatted_prompt)
-                st.code(response_1)
+                st.session_state['response_code_1'] = response_1
+                # st.code(response_1)
 
             cucumber_td_template = PromptTemplate.from_template(step_def_template)
-            cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
+            cucumber_td_template.input_variables=['testCaseType','tagName','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
 
             cucumber_step_formatted_prompt = cucumber_td_template.format(
                 testCaseType = st.session_state.testCaseType,
+                tagName = st.session_state.tagName,
                 testCase = st.session_state.testCase,
                 apiEndpoint = st.session_state.apiEndpoint,
                 httpMethod = st.session_state.httpMethod,
@@ -231,13 +295,14 @@ if submitted:
                 nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
                 # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
                 # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-                # language = st.session_state.language
+                language = st.session_state.language,
                 response = response_1
                 )
 
             if(len(cucumber_step_formatted_prompt) != 0):
                 response_2 = llm(cucumber_step_formatted_prompt)
-                st.code(response_2)
+                st.session_state['response_code_2'] = response_2
+                # st.code(response_2)
 
 
         if model == 'GPT-4':
@@ -248,13 +313,15 @@ if submitted:
 
             if(len(cucumber_scenario_formatted_prompt) != 0):
                 response_1 = llm(cucumber_scenario_formatted_prompt)
-                st.code(response_1)
+                st.session_state['response_code_1'] = response_1
+                # st.code(response_1)
 
             cucumber_td_template = PromptTemplate.from_template(step_def_template)
-            cucumber_td_template.input_variables=['testCaseType','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
+            cucumber_td_template.input_variables=['testCaseType', 'tagName','testCase','apiEndpoint','apiName','httpMethod','endUserType','mainBusinessObjective','subBusinessObjective','mandatoryHeaderParams','nonMandatoryHeaderParams','mandatoryRequestPayloadParameters','nonMandatoryRequestPayloadParameters','mandatoryResponsePayloadParameters','nonMandatoryResponsePayloadParameters','language','response']
 
             cucumber_step_formatted_prompt = cucumber_td_template.format(
                 testCaseType = st.session_state.testCaseType,
+                tagName = st.session_state.tagName,
                 testCase = st.session_state.testCase,
                 apiEndpoint = st.session_state.apiEndpoint,
                 httpMethod = st.session_state.httpMethod,
@@ -267,13 +334,14 @@ if submitted:
                 nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
                 # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
                 # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-                # language = st.session_state.language
+                language = st.session_state.language,
                 response = response_1
                 )
 
             if(len(cucumber_step_formatted_prompt) != 0):
                 response_2 = llm(cucumber_step_formatted_prompt)
-                st.code(response_2)
+                st.session_state['response_code_2'] = response_2
+                # st.code(response_2)
 
         if model ==  'Google Gemini Pro': 
             st.write('Using: ' + model)
@@ -282,12 +350,14 @@ if submitted:
 
             if(len(cucumber_scenario_formatted_prompt) != 0):
                 response_1 = llm.invoke(cucumber_scenario_formatted_prompt)
-                st.code(response_1.content)
+                st.session_state['response_code_1'] = response_1.content
+                # st.code(response_1.content)
 
 
             cucumber_td_template = PromptTemplate.from_template(step_def_template)
             cucumber_step_formatted_prompt = cucumber_td_template.format(
                 testCaseType = st.session_state.testCaseType,
+                tagName = st.session_state.tagName,
                 testCase = st.session_state.testCase,
                 apiEndpoint = st.session_state.apiEndpoint,
                 httpMethod = st.session_state.httpMethod,
@@ -300,13 +370,14 @@ if submitted:
                 nonMandatoryRequestPayloadParameters = st.session_state.nonMandatoryRequestPayloadParameters,
                 # mandatoryResponsePayloadParameters = st.session_state.mandatoryResponsePayloadParameters,
                 # nonMandatoryResponsePayloadParameters = st.session_state.nonMandatoryResponsePayloadParameters,
-                # language = st.session_state.language
+                language = st.session_state.language,
                 response = response_1.content
                 )
 
             if(len(cucumber_step_formatted_prompt) != 0):
                 response_2 = llm.invoke(cucumber_step_formatted_prompt)
-                st.code(response_2.content)
+                st.session_state['response_code_2'] = response_2.content
+                # st.code(response_2.content)
 
         if model == None:
             st.error('Please Select a LLM')
@@ -366,5 +437,100 @@ if submitted:
 
         if model == None:
             st.error('Please Select a LLM')
+
+def describe_code_function(response, llm):
+
+    full_prompt = f"""
+        Generated Code : {response}
+
+        Think you as the Expert Automation Quality Assurance Engineer, Understand above Cucumber code. 
+        Think step by step and describe the code in detail.
+        Give the code with adding description for each line of the code as comments.
+    """
+    if model == 'GPT-3.5 Turbo':
+        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.1)
+        response = llm(full_prompt)
+        return response
+    
+    if model ==  'GPT-4':
+        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
+        response = llm.invoke(full_prompt)
+        return response.content
+    
+    if model ==  'Google Gemini Pro':
+        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+        response = llm.invoke(full_prompt)
+        return response.content
+    
+
+if 'response_code_1' in st.session_state:
+    st.code(st.session_state['response_code_1'])
+
+    if st.session_state.language == 'Python':
+        file_extension = 'feature'
+    else:
+        file_extension = 'feature'
+
+    filename = f"feature_code.{file_extension}"
+    
+    code_to_download_1 = str(st.session_state['response_code_1']) 
+    
+    col1, col2 = st.columns(2)
+
+    with col1: 
+        st.download_button(
+            label="Export Feature Code",
+            data=code_to_download_1,
+            file_name=filename,
+            mime="text/plain",
+            use_container_width=True
+        )
+
+    with col2: 
+        describe_code_feature = st.button(
+            label="Describe the Feature Code",
+            use_container_width=True,
+            key="describe_code_feature"
+        )
+
+
+    if describe_code_feature:
+        full_description = describe_code_function(st.session_state['response_code_1'], model)
+        st.code(full_description)
+
+if 'response_code_2' in st.session_state:
+    st.code(st.session_state['response_code_2'])
+
+    if st.session_state.language == 'Python':
+        file_extension = 'py'
+    else:
+        file_extension = 'java'
+
+    filename = f"step_definition_code.{file_extension}"
+    
+    code_to_download_2 = str(st.session_state['response_code_2']) 
+    
+    col1, col2 = st.columns(2)
+
+    with col1: 
+        st.download_button(
+            label="Export Step Definition Code",
+            data=code_to_download_2,
+            file_name=filename,
+            mime="text/plain",
+            use_container_width=True
+        )
+
+    with col2: 
+        describe_code_step = st.button(
+            label="Describe the Step Definition Code",
+            use_container_width=True,
+            key="describe_code_step"
+        )
+
+
+    if describe_code_step:
+        full_description = describe_code_function(st.session_state['response_code_2'], model)
+        st.code(full_description)
 
 st.cache_data.clear()
