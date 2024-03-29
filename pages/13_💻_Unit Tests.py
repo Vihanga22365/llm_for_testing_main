@@ -25,7 +25,7 @@ hide_pages(
 
  
 if st.button('Back'):
-    switch_page("homepage")
+    switch_page("API Tests")
 
 
 st.title('Generate Unit Tests')
