@@ -35,7 +35,7 @@ with col1:
         switch_page("API Test Case Gen")
         
 with col2:
-    if st.button('Unit Tests', use_container_width=True):
+    if st.button('Generate Unit Tests', use_container_width=True):
         switch_page("Unit Tests")
 
 with col3:
