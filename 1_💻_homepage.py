@@ -40,14 +40,18 @@ if model == None:
 
 st.write('Please Select the type of tests you want to generate')
 
-col1,col2=st.columns(2)
+col1,col2, col3 =st.columns(3)
 
 with col1:
-    if st.button('API Tests',disabled=disabledButton,key='APIbtn'):
-        switch_page("API Tests")
+    if st.button('Unit Tests',disabled=disabledButton,key='unitBtn', use_container_width=True):
+        switch_page("Unit Tests")
 
 with col2:
-    if st.button('User Interface Tests',disabled=disabledButton):
+    if st.button('API Tests',disabled=disabledButton,key='APIbtn', use_container_width=True):
+        switch_page("API Tests")
+        
+with col3:
+    if st.button('User Interface Tests',disabled=disabledButton, key='UIbtn', use_container_width=True):
         switch_page("User Interface tests")
 
 if disabledButton:

@@ -85,6 +85,8 @@ When writing the test cases, follow  QA standards, and keywords. Please write te
 
 on = st.toggle('Populate fields with a sample scenario')
 
+
+
 if not on:
 
     uploaded_file = st.file_uploader("Choose an Excel file", type=['xlsx']) 
@@ -427,6 +429,8 @@ else:
             
             else :
                 switch_page("API Test Script Gen")
+
+
 
 
 
