@@ -92,7 +92,7 @@ Mandatory Request Payload Parameters - {mandatoryRequestPayloadParameters}\n
 Non-Mandatory Request Payload Parameters - {nonMandatoryRequestPayloadParameters}\n
 Cucumber scenario - {scenario}
 
-Think you are a QA engineer. I need to genarate {language} cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate {language} cucumber step definition only for that cucumber scenario. Plase provide code in function body as much as possible. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer. Only answer me with the code and nothing else. don't give additional text with answer. I need code only as answer."""
+Think you are a QA engineer. I need to genarate {language} cucumber step definition for above test case, as a professional QA engineer. Please mainly focus about above mention cucumber scenario and i need to genarate {language} cucumber step definition only for that cucumber scenario. Important thing is, generate the full complete code for given details without adding comments. When you write java cucumber step definition, please follow coding best practices, coding standards, exception handling as a QA engineer. Only answer me with the code and nothing else."""
 
 sample_step_def: str = """
 **Feature: Scheduling a Meeting**
