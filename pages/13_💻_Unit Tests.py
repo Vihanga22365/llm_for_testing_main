@@ -63,18 +63,30 @@ st.write('Please fill the below details to write the unit tests')
 # """
 
 template = """ 
+    Think you as the expert software engineer for write unit tests for a Spring Boot {springboot_version} project with Junit and Mockito. I want to generate unit tests for the below functions using Junit and Mockito. Below I mentioned the function.
 
-Think you as the expert software engineer for write unit testings. I want to generate unit testings for below functions. Below I mentioned the functions and the test cases details.
+    Input for Function - {input_for_function}
 
-Test case type - {testCaseType}
-Test case - {testCase}
-Functions - {functionCode}
+    Functions - {function}
 
-Identify the function and test case details.
-Thing step by steps and Write the unit test for above given function according to test cases.
-Adhere to coding best practices, coding standards, and implement robust exception handling.
-Implement detailed logging for debugging purposes.
-Only answer me with the code and nothing else. 
+    Denpendent Codes - {dependent_codes}
+
+    Instructions -
+        You're required to generate unit tests for a Spring Boot {springboot_version} project. Please pay close attention to the Spring Boot project version specified. Ensure that the unit test script you generate does not include deprecated methods.
+        Identify all dependent codes files related to this operation. the corresponding code snippets are provided in the Dependent Codes section. When writing your code, ensure to consider the dependencies outlined in that section.
+        Use JUnit as the testing framework. Do not utilize any other testing frameworks.
+        Avoid using external dependencies other than JUnit itself.
+        Utilize direct method invocation for accessing the controller method. Do not simulate an HTTP request or involve external layers such as the Spring Test framework.
+        Generate unit test script with latest version of Mockito and Junit
+        Make sure to identify all  conditional statements (if else conditions, switch statements) and try/catch blocks, if exist in the given function and write the unit test script with considering all of conditional statements (if else conditions, switch statements) and try/catch blocks for get 100% test coverage, including handling edge cases, error conditions, and all possible execution paths.
+
+    Completely identify the above-given function, Denpendent Code and Instructions.
+    The important thing is you need to include assert statements along with verification, when you are writing the unit tests.
+    Think step by step and consider the above instructions and write the unit test for the above given function according to the above Instructions.
+    Make sure to write unit test script with 100% test coverage. Don't skip any single code line in the given function for write unit test scripts.
+    Implement detailed logging for debugging purposes.
+    Only answer me with the code and nothing else.
+    The important thing is you need to write only the unit test code. Please don't write any explanations, comments, or additional notes.
 """
 
 
@@ -131,9 +143,10 @@ if uploaded_file is not None:
         data = df.iloc[0]  # Assuming data for form defaults is in the first row
 
         with st.form('api_ts_gen'):
-            st.text_input('Test Case Type', value=data.iloc[0], placeholder='Enter Test Case Type', key='testCaseType', help="Enter the type of the test case here. Ex: Positive, Negative etc.")
-            st.text_area('Test Case', value=data.iloc[1], placeholder='Please Type the Test Case', key='testCase', help="Please Enter the Test Case to be tested here.")
+            st.text_input('Springboot Version', placeholder='Enter Springboot Version', value=data.iloc[0], key = 'springboot_version',help="Enter the Springboot Version here")
+            st.text_input('Input For a Function', value=data.iloc[1], placeholder='Enter Input For a Function', key='input_for_function', help="Enter the inputs for the function to here")
             st.text_area('Function', value=data.iloc[2], placeholder='Enter the Function Code', key = 'functionCode',help="Please Enter the Function code here", height=500)
+            st.text_area('Denpendent Codes', value=data.iloc[3], placeholder='Enter the Denpendent Codes', key='dependent_codes', help="Enter the Denpendent Codes here.", height=500)
 
 
             submitted = st.form_submit_button("Generate")
@@ -143,25 +156,46 @@ if uploaded_file is not None:
 
 elif on:
     with st.form('api_ts_gen'):
-        st.text_input('Test Case Type', placeholder='Enter Test Case Type',value='Positive Test Case ', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
-        st.text_area('Test Case', placeholder='Please Type the Test Case', value="Verify that a meeting can be scheduled successfully with a valid RM and customer.",key = 'testCase', help="Please Enter the Test Case to be tested here.")
-        st.text_area('Function', placeholder='Enter the Function Code', key = 'functionCode',help="Please Enter the Function code here", value="""@PostMapping("/meeting")
-            public ResponseEntity<ResponseDTO> createMeeting(@RequestBody MeetingDTO meetingRequestDTO, @RequestHeader("countryCode") String countryCode, @RequestHeader("businessCode") String businessCode, @RequestHeader(value = "uuid", required = false) Long uuid) throws UserExistException, MeetingExistException {
-                if (countryCode == null || businessCode == null || countryCode.isEmpty() || businessCode.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO(HttpStatus.UNAUTHORIZED, "Please Add Valid Headers", NULL));
-                } else {
-                    MeetingDTO savedMeeting = meetingService.createMeeting(meetingRequestDTO, countryCode, businessCode, uuid);
-                    return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(HttpStatus.CREATED, "Meeting created successfully", savedMeeting));
-                }
-
-            }""" , height=500)
+        
+        func_code = """
+            @PostMapping("employee")
+            public ResponseEntity<ResponseDTO> createEmployee(@RequestBody  EmployeeDTO employeeDTO) throws UserExistException {
+                EmployeeDTO savedEmployee = employeeService.createEmployee(employeeDTO);
+                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(HttpStatus.CREATED, "Employee created successfully", savedEmployee));
+            }
+        """
+        
+        dependent_code = """
+            EmployeeDTO.java:
+            public class EmployeeDTO {
+                private String employeeId;
+                private String employeeFirstName;
+                private String employeeLastName;
+                private String employeePassword;
+                private String employeeType;
+            }
+            
+            -----------------------------------
+            
+            ResponseDTO.java:
+            public class ResponseDTO {
+                private HttpStatus status;
+                private String message;
+                private Object data;
+            }
+        """
+        st.text_input('Springboot Version', placeholder='Enter Springboot Version', value="2.7.16", key = 'springboot_version',help="Enter the Springboot Version here")
+        st.text_input('Input For a Function', value="employeeDTO", placeholder='Enter Input For a Function', key='input_for_function', help="Enter the inputs for the function to here")
+        st.text_area('Function', value=func_code, placeholder='Enter the Function Code', key = 'functionCode',help="Please Enter the Function code here", height=500)
+        st.text_area('Denpendent Codes', value=dependent_code, placeholder='Enter the Denpendent Codes', key='dependent_codes', help="Enter the Denpendent Codes to here.", height=500)
         submitted = st.form_submit_button("Generate")
 
 else: 
     with st.form('api_ts_gen'):
-        st.text_input('Test Case Type', placeholder='Enter Test Case Type', key = 'testCaseType',help="Enter the type of the test case here. Ex: Positive, Negative etc.")
-        st.text_area('Test Case', placeholder='Please Type the Test Case', key = 'testCase', help="Please Enter the Test Case to be tested here.")
+        st.text_input('Springboot Version', placeholder='Enter Springboot Version', key = 'springboot_version',help="Enter the Springboot Version here")
+        st.text_input('Input For a Function',  placeholder='Enter Input For a Function', key='input_for_function', help="Enter the inputs for the function to here")
         st.text_area('Function', placeholder='Enter the Function Code', key = 'functionCode',help="Please Enter the Function code here", height=500)
+        st.text_area('Denpendent Codes', placeholder='Enter the Denpendent Codes', key='dependent_codes', help="Enter the Denpendent Codes to here.", height=500)
         
         submitted = st.form_submit_button("Generate")
 
@@ -170,12 +204,13 @@ else:
 
 if submitted: 
     ui_ts_template = PromptTemplate.from_template(template)
-    ui_ts_template.input_variables = ['testCaseType', 'testCase', 'functionCode']
+    ui_ts_template.input_variables = ['springboot_version', 'input_for_function', 'function', 'dependent_codes']
 
     formatted_prompt = ui_ts_template.format(
-        testCaseType = st.session_state.testCaseType,
-        testCase = st.session_state.testCase,
-        functionCode = st.session_state.functionCode
+        springboot_version = st.session_state.springboot_version,
+        input_for_function = st.session_state.input_for_function,
+        function = st.session_state.functionCode,
+        dependent_codes = st.session_state.dependent_codes
     )
 
 
