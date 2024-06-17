@@ -9,4 +9,5 @@ langchain-google-genai
 st-pages
 langchain-community
 openpyxl
+tenacity>=8.1.0,!=8.4.0
 
