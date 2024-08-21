@@ -142,6 +142,7 @@ Once evaluated generate a report/summary as below:
         2) Weaknesses: Identify areas where the script could be improved (e.g., missing test cases, unnecessary complexity). Mention those things which are not covered in the Generated unit test script one by one. If Generated unit test script does not cover any edge cases or extreme conditions or error handling or any other important scenarios, mention those scenarios one by one.
         3) Overall Recommendation: State whether the script is suitable for unit testing the provided code snippet, or if it requires further refinement.
         4) Test Coverage :  You need to Consider "Springboot Functions" and "Generated unit test script". According to your knowlage give the unit test script test coverage precentage for the "Generated unit test script" as a Integer value.
+        5) Reasons For Test Coverage : Mention the reasons for the test coverage percentage that you have given in "Test Coverage" section. (Give point form reasons)
     """
     if model == 'GPT-3.5 Turbo':
         llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0)
