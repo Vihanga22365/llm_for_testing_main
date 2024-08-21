@@ -126,40 +126,20 @@ def evaluate_the_result(unit_test_script, llm) :
 In there, we give below details to you as a input,
 1) Input for Function - In this selction we mention input parameters and values to the Java springboot code
 2) Springboot Functions - This is Java springboot code. The unit test script code written according to this Java Springboot code
-3) Generated unit test script - This is the unit testing code for above springboot function.
-4) Custom Denpendent Codes - In this section, we give the Custom Dependent codes for the "Springboot Functions" code. It means some of the java function depending on another custom created classes. As a example some functions depend on DTO files, DAO files, Entity Files, Custom Json Objects and etc. These kind of dependent codes include in the this section.  
+3) Custom Denpendent Codes - In this section, we give the Custom Dependent codes for the "Springboot Functions" code. It means some of the java function depending on another custom created classes. As a example some functions depend on DTO files, DAO files, Entity Files, Custom Json Objects and etc. These kind of dependent codes include in the this section.  
+4) Generated unit test script - This is the unit testing code for above springboot function.
+
 
 Input for function – {input_for_function}
 Springboot Functions – {function}
 Custom Denpendent Codes – {dependent_codes}		
 Generated unit test script –  {unit_test_script}
 
-    Comprehensiveness: 
-        Test Coverage -  Does the script cover a variety of scenarios, including positive(expected behavior) and negative test cases(unexpected behavior, invalid inputs, error handling), edge cases(boundary values, extreme conditions), and potential errors? For that You need to Consider "Springboot Functions" and "Generated unit test script" and analyze the unit test test coverage for given "Springboot Functions".
-        Mocking and Stubs - Are external dependencies (databases, APIs) properly mocked or stubbed to isolate the unit under test?
-
-    Dependent code availability - 
-	   For this step, you need to completely understand "Springboot Functions" and, "Custom Denpendent Codes".
-	   think step by step and consider Java Springboot code which is given in the "Springboot Functions" section, Identify all the custom dependent classes/object which need to write the unit test scripts in that "Springboot Functions" like DTO, DAO, Entity, Json objects and etc.
-	   Then compare identified Custom dependent classes/objects in the "Springboot Functions" section, which exist or not in the "Custom Denpendent Codes" section.
-	   Importance thing is if identified Custom dependent codes not in the "Custom Denpendent Codes" section, display those classes name one by one.
-    Accuracy: Do the assertions in the script effectively verify the expected behaviour of the code under test? Are the use of test data and mocks appropriate?
-    Testability: Does the script isolate the unit under test effectively or does it rely on external dependencies in a way that makes testing difficult?
-    Maintainability: Is the script well-structured and easy to understand, making it easy to maintain as the code evolves?
-    Clarity and Conciseness:
-        Readability: Are the test steps easy to understand? Avoid overly complex language or jargon that testers might not be familiar with.
-        Focus: Does each test script target a single unit of code (function, class, module)? Ensure they're not trying to test multiple functionalities at once.
-    Test Assertions: Do the scripts include clear assertions that verify the expected behavior of the unit? These could be:
-        Output values for functions
-        Internal state changes within the unit
-        Exceptions thrown by the unit
-    Data Validity: Are the test scripts using appropriate test data to effectively trigger different code paths and scenarios?
-
 
 Once evaluated generate a report/summary as below:
     Evaluation Report: Generate a report outlining your evaluation of the test script.
-        1) Strengths: Highlight the positive aspects of the script (e.g., clear assertions, good test coverage).
-        2) Weaknesses: Identify areas where the script could be improved (e.g., missing test cases, unnecessary complexity). Mention those things which are not covered in the unit test script one by one. If script does not cover any edge cases or extreme conditions or error handling or any other important scenarios, mention those scenarios one by one.
+        1) Strengths: Highlight the positive aspects of the Generated unit test script (e.g., clear assertions, good test coverage).
+        2) Weaknesses: Identify areas where the script could be improved (e.g., missing test cases, unnecessary complexity). Mention those things which are not covered in the Generated unit test script one by one. If Generated unit test script does not cover any edge cases or extreme conditions or error handling or any other important scenarios, mention those scenarios one by one.
         3) Overall Recommendation: State whether the script is suitable for unit testing the provided code snippet, or if it requires further refinement.
         4) Test Coverage :  You need to Consider "Springboot Functions" and "Generated unit test script". According to your knowlage give the unit test script test coverage precentage for the "Generated unit test script" as a Integer value.
     """
@@ -271,7 +251,7 @@ elif on:
                 }
             }
         """
-        st.text_input('Springboot Version', placeholder='Enter Springboot Version', value="2.7.16", key = 'springboot_version',help="Enter the Springboot Version here")
+        st.text_input('Springboot Version', placeholder='Enter Springboot Version', value="3.1.0", key = 'springboot_version',help="Enter the Springboot Version here")
         st.text_input('Input For a Function', value="employeeDTO", placeholder='Enter Input For a Function', key='input_for_function', help="Enter the inputs for the function to here")
         st.text_area('Function', value=func_code, placeholder='Enter the Function Code', key = 'functionCode',help="Please Enter the Function code here", height=500)
         st.text_area('Denpendent Codes', value=dependent_code, placeholder='Enter the Denpendent Codes', key='dependent_codes', help="Enter the Denpendent Codes to here.", height=500)
