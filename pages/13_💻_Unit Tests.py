@@ -222,10 +222,20 @@ elif on:
         
         func_code = """
             @PostMapping("employee")
-            public ResponseEntity<ResponseDTO> createEmployee(@RequestBody  EmployeeDTO employeeDTO) throws UserExistException {
-                EmployeeDTO savedEmployee = employeeService.createEmployee(employeeDTO);
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO(HttpStatus.CREATED, "Employee created successfully", savedEmployee));
+            public ResponseEntity<ResponseDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+                try {
+                    EmployeeDTO savedEmployee = employeeService.createEmployee(employeeDTO);
+                    return ResponseEntity.status(HttpStatus.CREATED)
+                            .body(new ResponseDTO(HttpStatus.CREATED, "Employee created successfully", savedEmployee));
+                } catch (UserExistException e) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(new ResponseDTO(HttpStatus.CONFLICT, "Employee already exists", null));
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create employee", null));
+                }
             }
+
         """
         
         dependent_code = """
@@ -245,6 +255,20 @@ elif on:
                 private HttpStatus status;
                 private String message;
                 private Object data;
+            }
+            
+            -----------------------------------
+            EmployeeService.java:
+            @Override
+            public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) throws UserExistException {
+                Optional<Employee> existEmployee = employeeRepository.findByEmployeeId(employeeDTO.getEmployeeId());
+                if(!existEmployee.isPresent()) {
+                    Employee employee = modelMapperConfig.modelMapper().map(employeeDTO, Employee.class);
+                    Employee savedEmployee = employeeRepository.save(employee);
+                    return modelMapperConfig.modelMapper().map(savedEmployee, EmployeeDTO.class);
+                } else {
+                    throw new UserExistException("Employee Already Exist");
+                }
             }
         """
         st.text_input('Springboot Version', placeholder='Enter Springboot Version', value="2.7.16", key = 'springboot_version',help="Enter the Springboot Version here")
