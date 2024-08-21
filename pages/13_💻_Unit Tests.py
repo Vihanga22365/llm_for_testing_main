@@ -260,7 +260,7 @@ elif on:
             -----------------------------------
             EmployeeService.java:
             @Override
-            public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) throws UserExistException {
+            public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
                 Optional<Employee> existEmployee = employeeRepository.findByEmployeeId(employeeDTO.getEmployeeId());
                 if(!existEmployee.isPresent()) {
                     Employee employee = modelMapperConfig.modelMapper().map(employeeDTO, Employee.class);
