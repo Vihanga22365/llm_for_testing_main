@@ -105,6 +105,7 @@ regenerate_unit_test_template = """
     
     **Main Goal** -
         Your main goal is regenerated the unit test script according to the "Evaluation Report for Existing Unit Test Script" and "Existing Unit Test Script".
+        importance thing is, When you are regenerating the unit test script, consider about the every points mention in the Missing Test Coverage ssection in the "Evaluation Report for Existing Unit Test Script".
 
     **Instructions** -
         You're required to generate unit tests for a Spring Boot {springboot_version} project. Please pay close attention to the Spring Boot project version specified. Ensure that the unit test script you generate does not include deprecated methods.
@@ -221,8 +222,15 @@ In there, we give below details to you as a input,
 Springboot Functions – {function}	
 Generated unit test script –  {unit_test_script}
 
+**Instructions**:
+    1) Consider about clear assertions, positive and Negative test cases, Exception handling, Edge cases, Error conditions, and all possible execution paths.
+    2) Consider about the code coverage, conditional statements (if else conditions, switch statements) and try/catch blocks.
+    3) Consider about the code quality, code standards, and best practices.
+    4) Consider about the code readability, maintainability, and reusability.
+    5) Mention every missing test coverage scenarios one by one according to the "Springboot Functions" and "Generated unit test script".
 
-Once evaluated generate a report/summary as below:
+
+**Once evaluated generate a report/summary as below**:
     Evaluation Report: Generate a report outlining your evaluation of the test script.
         1) Test Coverage :  Consider "Springboot Functions" and "Generated unit test script" and give the test coverage percentage as a percentage value. (0-100%).
         After that explain how you calculated the test coverage percentage. Mention the reasons for the test coverage percentage that you have given in "Test Coverage" section. Give the Test Coverage as a below example format.
