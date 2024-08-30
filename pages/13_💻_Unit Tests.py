@@ -90,6 +90,41 @@ template = """
 """
 
 
+regenerate_unit_test_template = """ 
+    Think you as the expert software engineer for write unit tests for a Spring Boot {springboot_version} project with Junit and Mockito. I want to regenerate unit tests for the below functions using Junit and Mockito according to the "Evaluation Report for Existing Unit Test Script" and "Existing Unit Test Script". Below I mentioned the function.
+
+    Input for Function - {input_for_function}
+
+    Functions - {function}
+
+    Denpendent Codes - {dependent_codes}
+    
+    Existing Unit Test Script - {unit_test_script}
+    
+    Evaluation Report for "Existing Unit Test Script" - {eval_report}
+    
+    **Main Goal** -
+        Your main goal is regenerated the unit test script according to the "Evaluation Report for Existing Unit Test Script" and "Existing Unit Test Script".
+
+    **Instructions** -
+        You're required to generate unit tests for a Spring Boot {springboot_version} project. Please pay close attention to the Spring Boot project version specified. Ensure that the unit test script you generate does not include deprecated methods.
+        Identify all dependent codes files related to this operation. the corresponding code snippets are provided in the Dependent Codes section. When writing your code, ensure to consider the dependencies outlined in that section.
+        Use JUnit as the testing framework. Do not utilize any other testing frameworks.
+        Avoid using external dependencies other than JUnit itself.
+        Utilize direct method invocation for accessing the controller method. Do not simulate an HTTP request or involve external layers such as the Spring Test framework.
+        Generate unit test script with latest version of Mockito and Junit
+        Make sure to identify all  conditional statements (if else conditions, switch statements) and try/catch blocks, if exist in the given function and write the unit test script with considering all of conditional statements (if else conditions, switch statements) and try/catch blocks for get 100% test coverage, including handling edge cases, error conditions, and all possible execution paths.
+
+    Completely identify the above-given function, Denpendent Code and Instructions.
+    The important thing is you need to include assert statements along with verification, when you are writing the unit tests.
+    Think step by step and consider the above instructions and write the unit test for the above given function according to the above Instructions.
+    Make sure to write unit test script with 100% test coverage. Don't skip any single code line in the given function for write unit test scripts.
+    Implement detailed logging for debugging purposes.
+    Only answer me with the code and nothing else.
+    The important thing is you need to write only the unit test code. Please don't write any explanations, comments, or additional notes.
+"""
+
+
 # template = """ 
 # I want to generate selenium test script for below test case. Below I mentioned the test case and business requirement.\n
 # Test case type - {testCaseType}\n
@@ -115,6 +150,61 @@ template = """
 
 # """
 
+def regenerate_unit_test_script(unit_test_script, eval_report, llm):
+    ui_ts_template = PromptTemplate.from_template(regenerate_unit_test_template)
+    ui_ts_template.input_variables = ['springboot_version', 'input_for_function', 'function', 'dependent_codes', 'unit_test_script', 'eval_report']
+
+    formatted_prompt = ui_ts_template.format(
+        springboot_version = st.session_state.springboot_version,
+        input_for_function = st.session_state.input_for_function,
+        function = st.session_state.functionCode,
+        dependent_codes = st.session_state.dependent_codes,
+        unit_test_script = unit_test_script,
+        eval_report = eval_report
+    )
+
+
+    if model == 'GPT-3.5 Turbo':
+
+        st.write('Using: '+model)
+
+        llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0.1)
+
+        if(len(formatted_prompt) != 0):
+            response = llm(formatted_prompt)
+            finalResponse = response
+            evaluate_the_result(finalResponse, llm)
+            st.session_state['response_code'] = response
+
+                    
+
+    if model ==  'GPT-4': 
+        st.write('Using: ' + model)
+
+        llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0)
+
+        if(len(formatted_prompt) != 0):
+            response = llm.invoke(formatted_prompt)
+            finalResponse = response.content
+            print(finalResponse)
+            evaluate_the_result(finalResponse, llm)
+            st.session_state['response_code'] = response.content
+            
+
+    if model ==  'Google Gemini Pro': 
+        st.write('Using: ' + model)
+
+        llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key = GOOGLE_API_KEY)
+
+        if(len(formatted_prompt) != 0):
+            response = llm.invoke(formatted_prompt)
+            finalResponse = response.content
+            evaluate_the_result(finalResponse, llm)
+            st.session_state['response_code'] = response.content
+
+    if model == None:
+        st.error('Please Select a LLM')
+
 def evaluate_the_result(unit_test_script, llm) :
     
     input_for_function = st.session_state.input_for_function
@@ -124,25 +214,21 @@ def evaluate_the_result(unit_test_script, llm) :
     full_prompt = f"""
             We created an LLM based application to generate unit test script based on code block provided.  Evaluate the generated unit test script based on the following criterias:
 In there, we give below details to you as a input,
-1) Input for Function - In this selction we mention input parameters and values to the Java springboot code
-2) Springboot Functions - This is Java springboot code. The unit test script code written according to this Java Springboot code
-3) Custom Denpendent Codes - In this section, we give the Custom Dependent codes for the "Springboot Functions" code. It means some of the java function depending on another custom created classes. As a example some functions depend on DTO files, DAO files, Entity Files, Custom Json Objects and etc. These kind of dependent codes include in the this section.  
-4) Generated unit test script - This is the unit testing code for above springboot function.
+1) Springboot Functions - This is Java springboot code. The unit test script code written according to this Java Springboot code
+2) Generated unit test script - This is the unit testing code for above springboot function.
 
 
-Input for function – {input_for_function}
-Springboot Functions – {function}
-Custom Denpendent Codes – {dependent_codes}		
+Springboot Functions – {function}	
 Generated unit test script –  {unit_test_script}
 
 
 Once evaluated generate a report/summary as below:
     Evaluation Report: Generate a report outlining your evaluation of the test script.
-        1) Strengths: Highlight the positive aspects of the Generated unit test script (e.g., clear assertions, good test coverage).
-        2) Weaknesses: Identify areas where the script could be improved (e.g., missing test cases, unnecessary complexity). Mention those things which are not covered in the Generated unit test script one by one. If Generated unit test script does not cover any edge cases or extreme conditions or error handling or any other important scenarios, mention those scenarios one by one.
-        3) Overall Recommendation: State whether the script is suitable for unit testing the provided code snippet, or if it requires further refinement.
-        4) Test Coverage :  You need to Consider "Springboot Functions" and "Generated unit test script". According to your knowlage give the unit test script test coverage precentage for the "Generated unit test script" as a Integer value.
-        5) Reasons For Test Coverage : Mention the reasons for the test coverage percentage that you have given in "Test Coverage" section. (Give point form reasons)
+        1) Test Coverage :  Consider "Springboot Functions" and "Generated unit test script" and give the test coverage percentage as a percentage value. (0-100%).
+        After that explain how you calculated the test coverage percentage. Mention the reasons for the test coverage percentage that you have given in "Test Coverage" section. Give the Test Coverage as a below example format.
+            Example: 
+                Test Coverage Presentage: (Give the test coverage percentage as a percentage value.)
+                Missing Test Coverage: (Mention the missing test coverage scenarios one by one as a bullet points)
     """
     if model == 'GPT-3.5 Turbo':
         llm = OpenAI(model_name= "gpt-3.5-turbo-0613", temperature = 0)
@@ -150,7 +236,7 @@ Once evaluated generate a report/summary as below:
         st.session_state['eval_response_code'] = eva_response
     
     if model ==  'GPT-4':
-        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
+        llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0)
         eva_response = llm.invoke(full_prompt)
         st.session_state['eval_response_code'] =  eva_response.content
     
@@ -208,9 +294,6 @@ elif on:
                     EmployeeDTO savedEmployee = employeeService.createEmployee(employeeDTO);
                     return ResponseEntity.status(HttpStatus.CREATED)
                             .body(new ResponseDTO(HttpStatus.CREATED, "Employee created successfully", savedEmployee));
-                } catch (UserExistException e) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body(new ResponseDTO(HttpStatus.CONFLICT, "Employee already exists", null));
                 } catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create employee", null));
@@ -247,8 +330,6 @@ elif on:
                     Employee employee = modelMapperConfig.modelMapper().map(employeeDTO, Employee.class);
                     Employee savedEmployee = employeeRepository.save(employee);
                     return modelMapperConfig.modelMapper().map(savedEmployee, EmployeeDTO.class);
-                } else {
-                    throw new UserExistException("Employee Already Exist");
                 }
             }
         """
@@ -299,7 +380,7 @@ if submitted:
     if model ==  'GPT-4': 
         st.write('Using: ' + model)
 
-        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
+        llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0)
 
         if(len(formatted_prompt) != 0):
             response = llm.invoke(formatted_prompt)
@@ -338,7 +419,7 @@ def describe_code_function(response, llm):
         return response
     
     if model ==  'GPT-4':
-        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
+        llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0)
         response = llm.invoke(full_prompt)
         return response.content
     
@@ -362,7 +443,7 @@ if 'response_code' in st.session_state:
     
     code_to_download = str(st.session_state['response_code']) 
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1: 
         st.download_button(
@@ -379,11 +460,24 @@ if 'response_code' in st.session_state:
             use_container_width=True,
             key="describe_code"
         )
+        
+    with col3:
+        regenerate_code = st.button(
+            label="Regenerate Code according to the evaluation report",
+            use_container_width=True,
+            key="regenerate_code"
+        )
 
 
     if describe_code:
         full_description = describe_code_function(st.session_state['response_code'], model)
         st.code(full_description)
+        
+    if regenerate_code:
+        regenerate_unit_test_script(st.session_state['response_code'], st.session_state['eval_response_code'], model)
+        st.code(st.session_state['response_code'])
+        # st.markdown(st.session_state['eval_response_code'])
+        
 
 st.cache_data.clear()
 
