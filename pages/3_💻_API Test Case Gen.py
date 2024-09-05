@@ -177,7 +177,7 @@ if uploaded_file is not None:
                 if model ==  'GPT-4': 
                     st.write('Using: ' + model)
 
-                    llm = ChatOpenAI(model_name= "gpt-4", temperature = 0.5)
+                    llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0.5)
 
                     if(len(fprompt) != 0):
                         response = llm.invoke(fprompt)
@@ -286,7 +286,7 @@ elif on:
             if model ==  'GPT-4': 
                 st.write('Using: ' + model)
 
-                llm = ChatOpenAI(model_name= "gpt-4", temperature = 0.5)
+                llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0.5)
 
                 if(len(fprompt) != 0):
                     response = llm.invoke(fprompt)
@@ -394,7 +394,7 @@ else:
             if model ==  'GPT-4': 
                 st.write('Using: ' + model)
 
-                llm = ChatOpenAI(model_name= "gpt-4", temperature = 0.5)
+                llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0.5)
 
                 if(len(fprompt) != 0):
                     response = llm.invoke(fprompt)

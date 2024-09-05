@@ -325,7 +325,7 @@ if submitted:
     if model == 'GPT-4':
         st.write('Using: ' +model)
 
-        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
+        llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0, model_kwargs={"seed": 10})
 
         if(len(cucumber_scenario_formatted_prompt) != 0):
             response_1 = llm.invoke(cucumber_scenario_formatted_prompt)
@@ -382,7 +382,7 @@ def describe_code_function(response, llm):
         return response
     
     if model ==  'GPT-4':
-        llm = ChatOpenAI(model_name= "gpt-4", temperature = 0, model_kwargs={"seed": 10})
+        llm = ChatOpenAI(model_name= "gpt-4o", temperature = 0, model_kwargs={"seed": 10})
         response = llm.invoke(full_prompt)
         return response.content
     
